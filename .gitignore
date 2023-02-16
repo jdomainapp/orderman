@@ -37,6 +37,8 @@ build.xml
 target/
 .metadata
 .settings
+.classpath
+.project
 /target
 /.settings/
 #/lib/
