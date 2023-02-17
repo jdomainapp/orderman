@@ -1,7 +1,7 @@
 package org.jda.example.orderman.software.config;
 
 
-import org.jda.example.orderman.modules.ModuleMain;
+import org.jda.example.orderman.software.ModuleMain;
 
 import jda.modules.dodm.dom.DOM;
 import jda.modules.dodm.dsm.DSM;

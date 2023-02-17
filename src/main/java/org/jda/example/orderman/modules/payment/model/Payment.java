@@ -2,7 +2,7 @@ package org.jda.example.orderman.modules.payment.model;
 
 import java.util.Map;
 
-import org.jda.example.orderman.modules.sales.order.model.Order;
+import org.jda.example.orderman.modules.order.model.Order;
 
 import jda.modules.common.exceptions.ConstraintViolationException;
 import jda.modules.common.types.Tuple;
@@ -26,24 +26,6 @@ import jda.modules.dcsl.syntax.DOpt;
  */
 @DClass(mutable=false)
 public class Payment {
-
-  /**
-   * @overview 
-   *
-   * @author Duc Minh Le (ducmle)
-   *
-   * @version 
-   */
-  public static enum PaymentStatus {
-    ACCEPTED,
-    REJECTED,
-    ;
-    
-    @DAttr(name = "name", type = Type.String, length=20, id=true,auto=true,mutable=false,optional = false)
-    public String getName() {
-      return name();
-    }
-  }
 
   public static final String A_student = "student";
 
@@ -282,7 +264,7 @@ public class Payment {
      *    {{@link #A_payDetails}, {@link #A_description}, {@link #A_status}}
      */
     private Map<String, Object> executeEnrolPayment(Order student) {
-      return EnrolmentPaymentProcess.getInstance().execute(student);
+      return CustomerPaymentProcess.getInstance().execute(student);
     }
 
 //    @DOpt(type = DOpt.Type.ObjectFormConstructor)

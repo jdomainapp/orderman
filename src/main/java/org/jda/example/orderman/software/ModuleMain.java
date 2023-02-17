@@ -1,4 +1,4 @@
-package org.jda.example.orderman.modules;
+package org.jda.example.orderman.software;
 
 import static jda.modules.mccl.conceptmodel.view.RegionName.Add;
 

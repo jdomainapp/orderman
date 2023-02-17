@@ -1,27 +1,30 @@
-package org.jda.example.orderman.util.model;
+package org.jda.example.orderman.modules.order.model;
 
 import jda.modules.dcsl.syntax.DAttr;
 import jda.modules.dcsl.syntax.DAttr.Type;
 
 /**
  * @overview 
- *  Represent the different status codes that are used.
- *  
- * @author dmle
  *
+ * @author Duc Minh Le (ducmle)
+ *
+ * @version 
  */
-public enum StatusCode {
-  Done("Done"),
-  NotDone("Not done");
+public enum OrderStatus {
+  RECV("Received"),
+  FILL("Filled"),
+  INVO("Invoiced"),
+  CLOS("Closed")
+  ;
   
   private String name;
   
-  private StatusCode(String name) {
+  private OrderStatus(String name) {
     this.name=name;
   }
   
   @DAttr(name="name", id=true, type=Type.String, length=30)
   public String getName() {
     return name;
-  }
+  }  
 }

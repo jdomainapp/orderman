@@ -1,7 +1,6 @@
-package org.jda.example.orderman.modules.ship;
+package org.jda.example.orderman.modules.sales;
 
-import org.jda.example.orderman.modules.ship.model.Shipment;
-import org.jda.example.orderman.util.model.StatusCode;
+import org.jda.example.orderman.modules.sales.model.SalesPerson;
 
 import jda.modules.mccl.conceptmodel.view.RegionType;
 import jda.modules.mccl.syntax.ModuleDescriptor;
@@ -9,7 +8,6 @@ import jda.modules.mccl.syntax.model.ModelDesc;
 import jda.modules.mccl.syntax.view.AttributeDesc;
 import jda.modules.mccl.syntax.view.ViewDesc;
 import jda.mosa.view.View;
-import jda.mosa.view.assets.datafields.list.JComboField;
 
 /**
  * @overview 
@@ -19,25 +17,26 @@ import jda.mosa.view.assets.datafields.list.JComboField;
  * @version 
  */
 @ModuleDescriptor(
-  name="Shipment",
+  name="Customer",
   modelDesc=@ModelDesc(
-      model=Shipment.class
+      model=SalesPerson.class
   ),
   viewDesc=@ViewDesc(
-      formTitle="Shipment",
-      imageIcon="shipment.gif",
+      formTitle="SalesPerson",
+      imageIcon="salesperson.gif",
       viewType=RegionType.Data,
       view=View.class
   ),
   isPrimary=true
 )
-public class ModuleShip {
-  @AttributeDesc(label="Shipment")
+public class ModuleSalesPerson {
+        
+  @AttributeDesc(label="SalesPerson")
   private String title;
   
   @AttributeDesc(label="Id")
   private int id;
 
-  @AttributeDesc(label="Status", type=JComboField.class)
-  private StatusCode status;  
+  @AttributeDesc(label="Name")
+  private String name;
 }
