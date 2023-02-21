@@ -1,6 +1,6 @@
-package org.jda.example.orderman.modules.fulfill;
+package org.jda.example.orderman.modules.delivery;
 
-import org.jda.example.orderman.modules.fulfill.model.OrderFulfillment;
+import org.jda.example.orderman.modules.delivery.model.Delivery;
 import org.jda.example.orderman.util.model.StatusCode;
 
 import jda.modules.mccl.conceptmodel.view.RegionType;
@@ -20,20 +20,20 @@ import jda.mosa.view.assets.datafields.list.JComboField;
  */
 
 @ModuleDescriptor(
-    name="OrderFulfillment",
+    name="Delivery",
   modelDesc=@ModelDesc(
-      model=OrderFulfillment.class
+      model=Delivery.class
   ),
   viewDesc=@ViewDesc(
-      formTitle="OrderFulfillment",
-      imageIcon="fulfillment.gif",
+      formTitle="Delivery",
+      imageIcon="delivery.gif",
       viewType=RegionType.Data,
       view=View.class
   ),
   isPrimary=true
 )
-public class ModuleOrderFulfillment {
-  @AttributeDesc(label="Order Fulfillment")
+public class ModuleDelivery {
+  @AttributeDesc(label="Delivery")
   private String title;
   
   @AttributeDesc(label="Id")

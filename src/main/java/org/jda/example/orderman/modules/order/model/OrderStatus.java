@@ -14,7 +14,8 @@ public enum OrderStatus {
   RECV("Received"),
   FILL("Filled"),
   INVO("Invoiced"),
-  CLOS("Closed")
+  CLOS("Closed"),
+  REJE("Rejected"),
   ;
   
   private String name;
@@ -26,5 +27,13 @@ public enum OrderStatus {
   @DAttr(name="name", id=true, type=Type.String, length=30)
   public String getName() {
     return name;
+  }
+
+  /**
+   * @effects 
+   * 
+   */
+  boolean isRejected() {
+    return this == REJE;
   }  
 }

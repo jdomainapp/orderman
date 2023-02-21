@@ -1,10 +1,11 @@
 package org.jda.example.orderman.modules.order;
 
-import org.jda.example.orderman.modules.order.model.Order;
+import org.jda.example.orderman.modules.order.model.CustOrder;
 import org.jda.example.orderman.modules.order.model.OrderLine;
 import org.jda.example.orderman.modules.product.model.Product;
 
 import jda.modules.dcsl.syntax.Select;
+import jda.modules.mccl.conceptmodel.view.RegionName;
 import jda.modules.mccl.conceptmodel.view.RegionType;
 import jda.modules.mccl.syntax.ModuleDescriptor;
 import jda.modules.mccl.syntax.model.ModelDesc;
@@ -12,6 +13,7 @@ import jda.modules.mccl.syntax.view.AttributeDesc;
 import jda.modules.mccl.syntax.view.ViewDesc;
 import jda.mosa.view.View;
 import jda.mosa.view.assets.datafields.JSimpleFormattedField;
+import jda.mosa.view.assets.layout.TwoColumnLayoutBuilder;
 
 @ModuleDescriptor(
 name="OrderLine",
@@ -22,7 +24,10 @@ viewDesc=@ViewDesc(
     formTitle="Order Line",
     imageIcon="orderline.gif",
     viewType=RegionType.Data,
-    view=View.class
+    view=View.class,
+    parent=RegionName.Tools,
+    layoutBuilderType=TwoColumnLayoutBuilder.class,
+    topX=0.5,topY=0.0,widthRatio=0.5f,heightRatio = 0.5f
 ),
 isPrimary=true)
 public class ModuleOrderLine {
@@ -33,7 +38,7 @@ public class ModuleOrderLine {
   private int id;
   
   @AttributeDesc(label="Order")
-  private Order order;
+  private CustOrder order;
   
   @AttributeDesc(label="Product",
       ref=@Select(clazz=Product.class,attributes={"productDescr"}))
@@ -45,6 +50,6 @@ public class ModuleOrderLine {
   @AttributeDesc(label="Quantity",type=JSimpleFormattedField.class)
   private int quantity;
 
-  @AttributeDesc(label="Tổng dòng",editable=false,type=JSimpleFormattedField.class)
+  @AttributeDesc(label="Line Total",editable=false,type=JSimpleFormattedField.class)
   private int lineTotal;
 }

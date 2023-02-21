@@ -2,7 +2,7 @@ package org.jda.example.orderman.modules.payment.model;
 
 import java.util.Map;
 
-import org.jda.example.orderman.modules.order.model.Order;
+import org.jda.example.orderman.modules.order.model.CustOrder;
 
 import jda.modules.common.exceptions.ConstraintViolationException;
 import jda.modules.common.types.Tuple;
@@ -45,8 +45,8 @@ public class Payment {
     @DAttr(name = A_student, type = Type.Domain
         //, auto=true
         , mutable=false, optional = false)
-    @DAssoc(ascName = "std-has-payment", role = "enr", ascType = AssocType.One2Many, endType = AssocEndType.Many, associate = @Associate(type = Order.class, cardMin = 1, cardMax = 1), dependsOn = true)
-    private Order student;
+    @DAssoc(ascName = "std-has-payment", role = "enr", ascType = AssocType.One2Many, endType = AssocEndType.Many, associate = @Associate(type = CustOrder.class, cardMin = 1, cardMax = 1), dependsOn = true)
+    private CustOrder student;
 
     @DAttr(name = A_payDetails, type = Type.String, length = 255, auto=true, mutable=false)
     private String payDetails;
@@ -102,7 +102,7 @@ public class Payment {
 
     @DOpt(type = DOpt.Type.Getter)
     @AttrRef(value = "student")
-    public Order getOrder() {
+    public CustOrder getOrder() {
         return this.student;
     }
 
@@ -179,7 +179,7 @@ public class Payment {
 //    }
     
     @DOpt(type = DOpt.Type.DataSourceConstructor)
-    public Payment(Integer id, Order student, String paymentDetails, String description, PaymentStatus status) throws ConstraintViolationException {
+    public Payment(Integer id, CustOrder student, String paymentDetails, String description, PaymentStatus status) throws ConstraintViolationException {
         this.id = genId(id);
         this.student = student;
         this.payDetails = paymentDetails;
@@ -200,7 +200,7 @@ public class Payment {
      */
     @DOpt(type = DOpt.Type.ObjectFormConstructor)
     //@DOpt(type = DOpt.Type.RequiredConstructor)
-    public Payment(Order student) throws ConstraintViolationException {
+    public Payment(CustOrder student) throws ConstraintViolationException {
       this.id = genId(null);
       this.student = student;
       
@@ -263,7 +263,7 @@ public class Payment {
      *  return result as {@link Map}<String,Object>, whose keys are 
      *    {{@link #A_payDetails}, {@link #A_description}, {@link #A_status}}
      */
-    private Map<String, Object> executeEnrolPayment(Order student) {
+    private Map<String, Object> executeEnrolPayment(CustOrder student) {
       return CustomerPaymentProcess.getInstance().execute(student);
     }
 

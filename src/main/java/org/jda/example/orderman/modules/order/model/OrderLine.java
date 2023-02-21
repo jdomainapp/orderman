@@ -33,9 +33,9 @@ public class OrderLine {
   @DAttr(name="order",type=Type.Domain,optional=false)
   @DAssoc(ascName="order-has-lines",role="line",
     ascType=AssocType.One2Many,endType=AssocEndType.Many,
-    associate=@Associate(type=Order.class,cardMin=1,cardMax=1), 
+    associate=@Associate(type=CustOrder.class,cardMin=1,cardMax=1), 
     dependsOn=true)
-  private Order order;
+  private CustOrder order;
   
   @DAttr(name=AttributeName_Product,type=Type.Domain,optional=false)
   @DAssoc(ascName="product-has-lines",role="line",
@@ -62,7 +62,7 @@ public class OrderLine {
   
   private static int idCounter;
   
-  public OrderLine(Integer id, Order order, Product product, Integer quantity, Double lineTotal) {
+  public OrderLine(Integer id, CustOrder order, Product product, Integer quantity, Double lineTotal) {
     this.id = nextID(id);
     this.order = order;
     this.product = product;
@@ -76,12 +76,12 @@ public class OrderLine {
     stateHist = new StateHistory<String,Object>();
   }
 
-  public OrderLine(Order order, Product product, Integer quantity, Double lineTotal) {
+  public OrderLine(CustOrder order, Product product, Integer quantity, Double lineTotal) {
     this(null,order,product,quantity,lineTotal);
   }
 
 
-  public Order getOrder() {
+  public CustOrder getOrder() {
     return order;
   }
 
@@ -93,7 +93,7 @@ public class OrderLine {
     return order.getOrderID();
   }
 
-  public void setOrder(Order order) {
+  public void setOrder(CustOrder order) {
     this.order = order;
   }
 

@@ -1,6 +1,12 @@
 package org.jda.example.orderman.software.config;
 
 
+import org.jda.example.orderman.modules.customer.ModuleCustomer;
+import org.jda.example.orderman.modules.delivery.ModuleDelivery;
+import org.jda.example.orderman.modules.fillorder.ModuleFillOrder;
+import org.jda.example.orderman.modules.handleorder.ModuleHandleOrder;
+import org.jda.example.orderman.modules.order.ModuleCustOrder;
+import org.jda.example.orderman.modules.order.ModuleOrderLine;
 import org.jda.example.orderman.software.ModuleMain;
 
 import jda.modules.dodm.dom.DOM;
@@ -25,7 +31,7 @@ import jda.modules.setup.model.SetUpConfig;
  */
 @SystemDesc(
     appName="CourseMan",
-    splashScreenLogo="hanu.gif",
+    splashScreenLogo="orderman.gif",
     language=Language.English,
     orgDesc=@OrgDesc(
         name="My Company",
@@ -46,7 +52,12 @@ import jda.modules.setup.model.SetUpConfig;
     modules={         
         ModuleMain.class,  // main
         // data
-        
+        ModuleHandleOrder.class,
+        ModuleCustOrder.class,
+        ModuleFillOrder.class,
+        ModuleOrderLine.class,
+        ModuleCustomer.class,
+        ModuleDelivery.class
     },
     sysModules={}, 
     setUpDesc=@SysSetUpDesc(

@@ -1,7 +1,8 @@
-package org.jda.example.orderman.modules.fulfill.model;
+package org.jda.example.orderman.modules.delivery.model;
 
 import java.util.Objects;
 
+import org.jda.example.orderman.modules.fillorder.model.FillOrder;
 import org.jda.example.orderman.util.model.StatusCode;
 
 import jda.modules.dcsl.syntax.DAttr;
@@ -14,7 +15,7 @@ import jda.modules.dcsl.syntax.DAttr.Type;
  *
  * @version 
  */
-public class OrderFulfillment {
+public class Delivery {
   @DAttr(name="id",type=Type.Integer,id=true,auto=true,mutable=false,optional=false,min=1)
   private int id;
   
@@ -24,6 +25,11 @@ public class OrderFulfillment {
       )
   private StatusCode status;
 
+  
+  // virtual link to FillOrder
+  @DAttr(name="fillOrder",type=Type.Domain,serialisable=false,virtual=true)
+  private FillOrder fillOrder;
+  
   /**
    * @effects return status
    */
@@ -52,7 +58,7 @@ public class OrderFulfillment {
    */
   @Override
   public String toString() {
-    return "OrderFulfillment (" + id + ", " + status + ")";
+    return "Delivery (" + id + ", " + status + ")";
   }
 
   /**
@@ -78,7 +84,7 @@ public class OrderFulfillment {
       return false;
     if (getClass() != obj.getClass())
       return false;
-    OrderFulfillment other = (OrderFulfillment) obj;
+    Delivery other = (Delivery) obj;
     return id == other.id;
   }
   

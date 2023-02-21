@@ -5,7 +5,8 @@ import java.util.Date;
 import java.util.List;
 
 import org.jda.example.orderman.modules.customer.model.Customer;
-import org.jda.example.orderman.util.model.StatusCode;
+import org.jda.example.orderman.modules.fillorder.model.FillOrder;
+import org.jda.example.orderman.modules.handleorder.model.HandleOrder;
 
 import jda.modules.common.cache.StateHistory;
 import jda.modules.common.exceptions.ConstraintViolationException;
@@ -21,7 +22,7 @@ import jda.modules.dcsl.syntax.DCSLConstants;
 import jda.modules.dcsl.syntax.DOpt;
 import jda.modules.dcsl.syntax.Select;
 
-public class Order {
+public class CustOrder {
   
   /** publicly visible (but not accessible) attribute names */
   //TODO: change to AttributeName_ constant instead
@@ -30,7 +31,7 @@ public class Order {
   }
 
   public static final String Attribute_orderDate = "orderDate";
-  
+
   @DAttr(name="orderID",type=Type.Integer,auto=true,id=true,mutable=false,optional=false)
   private int orderID;
 
@@ -73,9 +74,18 @@ public class Order {
       )
   private OrderStatus status;
   
-  public Order(Integer orderID, Date orderDate, 
+  // virtual link to HandleOrder
+  @DAttr(name="handleOrder",type=Type.Domain,serialisable=false,virtual=true)
+  private HandleOrder handleOrder;
+  
+  // virtual link to FillOrder
+  @DAttr(name="fillOrder",type=Type.Domain,serialisable=false,virtual=true)
+  private FillOrder fillOrder;
+  
+  public CustOrder(Integer orderID, Date orderDate, 
       Customer customer,
       List<OrderLine> lines,
+      OrderStatus status,
       Double orderTotal
       ) {
     this.orderID = nextID(orderID);
@@ -85,9 +95,15 @@ public class Order {
       this.lines =  lines;
       orderLineCount = lines.size();
     } else {
-      this.lines = new ArrayList();
+      this.lines = new ArrayList<>();
       orderLineCount = 0;
     }
+    
+    this.status = status;
+//    if (acceptOrNot != null)
+//      this.acceptOrNot = acceptOrNot;
+//    else
+//      this.acceptOrNot = false;
     
     if (orderTotal != null) {
       this.orderTotal = orderTotal;
@@ -98,12 +114,16 @@ public class Order {
     stateHist = new StateHistory<Attribute,Object>();
   }
 
-  public Order(Integer orderID, Date orderDate, Customer customer, Double orderTotal) {
-    this(orderID, orderDate, customer, null, orderTotal);
+  public CustOrder(Integer orderID, Date orderDate, Customer customer, Double orderTotal) {
+    this(orderID, orderDate, customer, null, null, orderTotal);
   }
 
-  public Order(Date orderDate, Customer customer, List<OrderLine> lines, Double orderTotal) {
-    this(null, orderDate, customer, lines, orderTotal);
+  public CustOrder(Date orderDate, Customer customer, OrderStatus status, List<OrderLine> lines) {
+    this(null, orderDate, customer, lines, status, null);
+  }
+  
+  public CustOrder(Date orderDate, Customer customer, List<OrderLine> lines, Double orderTotal) {
+    this(null, orderDate, customer, lines, null, orderTotal);
   }
   
   public Date getOrderDate() {
@@ -216,6 +236,7 @@ public class Order {
     return orderID;
   }
   
+  
 //  private void updateOrderTotal() {
 //    if (lines != null) {
 //      double total = 0;
@@ -227,6 +248,20 @@ public class Order {
 //    } else {
 //      orderTotal = 0;
 //    }  
+//  }
+
+//  /**
+//   * @effects return acceptOrNot
+//   */
+//  public boolean getAcceptOrNot() {
+//    return acceptOrNot;
+//  }
+//
+//  /**
+//   * @effects set acceptOrNot = acceptOrNot
+//   */
+//  public void setAcceptOrNot(boolean acceptOrNot) {
+//    this.acceptOrNot = acceptOrNot;
 //  }
 
   /**
@@ -245,7 +280,7 @@ public class Order {
       Object val = stateHist.get(Attribute.orderTotal);
       
       if (val == null)
-        throw new IllegalStateException("Order.getOrderTotal: cached value is null");
+        throw new IllegalStateException("CustOrder.getOrderTotal: cached value is null");
       
       return (Double) val;
     } else {
@@ -279,7 +314,7 @@ public class Order {
 
   @Override
   public String toString() {
-    return "Order (" + orderID + ", " + customer + ")";
+    return "CustOrder (" + orderID + ", " + customer + ")";
   } 
 
   private static int nextID(Integer currID) {
@@ -336,10 +371,18 @@ public class Order {
       return false;
     if (getClass() != obj.getClass())
       return false;
-    Order other = (Order) obj;
+    CustOrder other = (CustOrder) obj;
     if (orderID != other.orderID)
       return false;
     return true;
+  }
+
+  /**
+   * @effects 
+   *  
+   */
+  public boolean isRejected() {
+    return status.isRejected();
   }
   
   

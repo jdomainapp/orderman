@@ -5,7 +5,7 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
-import org.jda.example.orderman.modules.order.model.Order;
+import org.jda.example.orderman.modules.order.model.CustOrder;
 import org.jda.example.orderman.modules.order.model.OrderLine;
 
 import jda.modules.common.cache.StateHistory;
@@ -88,7 +88,7 @@ public class Product {
       //v2.6.4b: added totalSales
       Double totalSales,
       //TODO: is this OrderLine?
-      List<Order> orders) {
+      List<CustOrder> orders) {
     this.productID = nextID(productID);
     
     this.productDescr = productDescr;

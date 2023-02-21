@@ -3,7 +3,7 @@ package org.jda.example.orderman.modules.customer.model;
 import java.util.ArrayList;
 import java.util.Collection;
 
-import org.jda.example.orderman.modules.order.model.Order;
+import org.jda.example.orderman.modules.order.model.CustOrder;
 
 import jda.modules.common.exceptions.ConstraintViolationException;
 import jda.modules.common.types.Tuple;
@@ -41,15 +41,12 @@ public class Customer {
   @DAttr(name=A_name,type=Type.String,length=30,optional=false)
   private String name;
   
-  @DAttr(name=A_helpRequested,type=Type.Boolean, serialisable=false)
-  private boolean helpRequested;
-  
   @DAttr(name=A_orders,type=Type.Collection,optional=false,serialisable=false,
-      filter=@Select(clazz=Order.class))
+      filter=@Select(clazz=CustOrder.class))
   @DAssoc(ascName="std-has-orders",role="std",
     ascType=AssocType.One2Many,endType=AssocEndType.One,
-    associate=@Associate(type=Order.class,cardMin=0,cardMax=30))
-  private Collection<Order> orders;  
+    associate=@Associate(type=CustOrder.class,cardMin=0,cardMax=30))
+  private Collection<CustOrder> orders;  
   
   // derived
   private int orderCount;
@@ -60,30 +57,17 @@ public class Customer {
   private static int idCounter = 0;
 
   // constructor methods
-  @DOpt(type=DOpt.Type.ObjectFormConstructor)
-  public Customer(String name, Boolean helpRequested) {
-    this(null, name, helpRequested);
-  }
-  
   @DOpt(type=DOpt.Type.RequiredConstructor)
+  @DOpt(type=DOpt.Type.ObjectFormConstructor)
   public Customer(String name) {
-    this(null, name, null);
+    this(null, name);
   }
 
   @DOpt(type=DOpt.Type.DataSourceConstructor)
   public Customer(Integer id, String name) {
-    this(id, name, null);
-  }
-  
-  private Customer(Integer id, String name, Boolean helpRequested) {
     // generate an id
     this.id = nextID(id);
     this.name = name;
-    
-    if (helpRequested != null)
-      this.helpRequested = helpRequested;
-    else
-      this.helpRequested = false;
     
     this.orders = new ArrayList<>();
   }
@@ -110,37 +94,21 @@ public class Customer {
     this.name = name;
   }
 
-  /**
-   * @effects 
-   *  return {@link #helpRequested}
-   */
-  public boolean getHelpRequested() {
-    return helpRequested;
-  }
-  
-  /**
-   * @effects 
-   *  set this.{@link #helpRequested} = helpRequested
-   */
-  public void setHelpRequested(boolean helpRequested) {
-    this.helpRequested = helpRequested;
-  }
-  
   /**Association {@link #orders} */
   @DOpt(type=DOpt.Type.Getter)@AttrRef(value="orders")
-  public Collection<Order> getOrders() {
+  public Collection<CustOrder> getOrders() {
     return orders;
   }
 
   @DOpt(type=DOpt.Type.Setter)@AttrRef(value="orders")
-  public void setOrders(Collection<Order> en) {
+  public void setOrders(Collection<CustOrder> en) {
     this.orders = en;
     orderCount = en.size();
   }
 
   
   @DOpt(type=DOpt.Type.LinkAdderNew)  @AttrRef("orders")
-  public boolean addNewOrder(Order e) {
+  public boolean addNewOrder(CustOrder e) {
     orders.add(e);
     
     orderCount++;
@@ -150,7 +118,7 @@ public class Customer {
   }
   
   @DOpt(type=DOpt.Type.LinkAdderNew)  @AttrRef("orders")
-  public boolean addNewOrder(Collection<Order> orders) {
+  public boolean addNewOrder(Collection<CustOrder> orders) {
     orders.addAll(orders);
     
     orderCount+=orders.size();
@@ -160,7 +128,7 @@ public class Customer {
   }
   
   @DOpt(type=DOpt.Type.LinkAdder)  @AttrRef("orders")
-  public boolean addOrder(Order e) {
+  public boolean addOrder(CustOrder e) {
     if (!orders.contains(e)) {
       orders.add(e);
     
@@ -172,8 +140,8 @@ public class Customer {
   }
   
   @DOpt(type=DOpt.Type.LinkAdder)  @AttrRef("orders")
-  public boolean addOrder(Collection<Order> orders) {
-    for (Order e : orders) {
+  public boolean addOrder(Collection<CustOrder> orders) {
+    for (CustOrder e : orders) {
       if (!orders.contains(e)) {
         orders.add(e);
         
@@ -186,7 +154,7 @@ public class Customer {
   }
 
   @DOpt(type=DOpt.Type.LinkRemover)  @AttrRef("orders")
-  public boolean removeOrder(Order e) throws ConstraintViolationException {
+  public boolean removeOrder(CustOrder e) throws ConstraintViolationException {
     boolean removed = orders.remove(e);
     
     if (removed) {

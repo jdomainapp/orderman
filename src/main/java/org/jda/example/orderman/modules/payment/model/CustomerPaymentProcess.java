@@ -6,12 +6,12 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
-import org.jda.example.orderman.modules.order.model.Order;
+import org.jda.example.orderman.modules.order.model.CustOrder;
 import org.jda.example.orderman.modules.product.model.Product;
 
 /**
  * @overview Represents a process of requesting a designated bank of a a
- *           {@link Order} to perform a {@link Payment}.
+ *           {@link CustOrder} to perform a {@link Payment}.
  * 
  * @author Duc Minh Le (ducmle)
  *
@@ -52,7 +52,7 @@ public class CustomerPaymentProcess {
    *    {{@link Payment#A_payDetails}, {@link Payment#A_description}, {@link Payment#A_status}}
    *   </pre>
    */
-  public Map<String, Object> execute(Order order) {
+  public Map<String, Object> execute(CustOrder order) {
     // TODO: simulate the following payment process (e.g. showing the progress
     // on a GUI)
 
@@ -112,7 +112,7 @@ public class CustomerPaymentProcess {
    * @effects retrieve and return the PaymentProfile of <tt>order</tt>
    * 
    */
-  private PaymentProfile lookUpPaymentProfile(Order order) {
+  private PaymentProfile lookUpPaymentProfile(CustOrder order) {
     // TODO store payment profile in data store and retrieve them
     // for now, assume the same profile for all orders
     return Fixed_Payment_Profile;
