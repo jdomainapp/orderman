@@ -18,6 +18,7 @@ import jda.modules.mccl.syntax.controller.ControllerDesc.OpenPolicy;
 import jda.modules.mccl.syntax.model.ModelDesc;
 import jda.modules.mccl.syntax.view.AttributeDesc;
 import jda.modules.mccl.syntax.view.ViewDesc;
+import jda.mosa.controller.Controller;
 import jda.mosa.view.View;
 import jda.mosa.view.assets.datafields.JSimpleFormattedField;
 import jda.mosa.view.assets.datafields.datetime.JDateFieldSimple;
@@ -39,7 +40,11 @@ viewDesc=@ViewDesc(
     layoutBuilderType=TwoColumnLayoutBuilder.class,
     topX=0.5,topY=0.0,widthRatio=0.5f,heightRatio=0.5f
 ),
-isPrimary=true)
+controllerDesc=@ControllerDesc(
+    controller=Controller.class,
+    isDataFieldStateListener=true
+)
+,isPrimary=true)
 public class ModuleCustOrder {
   
   @AttributeDesc(label="Order")

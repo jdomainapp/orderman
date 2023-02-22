@@ -68,9 +68,8 @@ public class CustOrder {
   
   private static int idCounter;
   
-  @DAttr(name = "status", type = Type.Domain
-      // not supported for Domain-typed attribute: auto=true
-      , mutable=false
+  @DAttr(name = "status", type = Type.Domain,
+      optional=false
       )
   private OrderStatus status;
   
@@ -114,8 +113,8 @@ public class CustOrder {
     stateHist = new StateHistory<Attribute,Object>();
   }
 
-  public CustOrder(Integer orderID, Date orderDate, Customer customer, Double orderTotal) {
-    this(orderID, orderDate, customer, null, null, orderTotal);
+  public CustOrder(Integer orderID, Date orderDate, Customer customer, Double orderTotal, OrderStatus status) {
+    this(orderID, orderDate, customer, null, status, orderTotal);
   }
 
   public CustOrder(Date orderDate, Customer customer, OrderStatus status, List<OrderLine> lines) {

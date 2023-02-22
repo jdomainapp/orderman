@@ -2,6 +2,7 @@ package org.jda.example.orderman.modules.fillorder;
 
 import java.util.Collection;
 
+import org.jda.example.orderman.modules.delivery.model.Delivery;
 import org.jda.example.orderman.modules.fillorder.model.FillOrder;
 import org.jda.example.orderman.modules.order.model.CustOrder;
 
@@ -9,9 +10,6 @@ import jda.modules.mccl.conceptmodel.view.RegionName;
 import jda.modules.mccl.conceptmodel.view.RegionType;
 import jda.modules.mccl.syntax.MCCLConstants;
 import jda.modules.mccl.syntax.ModuleDescriptor;
-import jda.modules.mccl.syntax.containment.CEdge;
-import jda.modules.mccl.syntax.containment.CTree;
-import jda.modules.mccl.syntax.containment.ScopeDesc;
 import jda.modules.mccl.syntax.controller.ControllerDesc;
 import jda.modules.mccl.syntax.controller.ControllerDesc.OpenPolicy;
 import jda.modules.mccl.syntax.model.ModelDesc;
@@ -21,7 +19,6 @@ import jda.mosa.view.View;
 import jda.mosa.view.assets.datafields.JTextField;
 import jda.mosa.view.assets.layout.SequentialLayoutBuilder;
 import jda.mosa.view.assets.layout.TwoColumnLayoutBuilder;
-import jda.mosa.view.assets.panels.DefaultPanel;
 
 /**
  * @overview 
@@ -57,15 +54,13 @@ public class ModuleFillOrder {
   private CustOrder receivedOrder;
 
   // receive order 
-  @AttributeDesc(label="Update order",
-      type=DefaultPanel.class
+  @AttributeDesc(label="Update order"
     ,layoutBuilderType=TwoColumnLayoutBuilder.class
       ,controllerDesc=@ControllerDesc(
           openPolicy=OpenPolicy.I))
   private Collection<CustOrder> orders;
   
   // fill order
-  @AttributeDesc(label="Delivery"
-      ,type=DefaultPanel.class)
-  private Collection<FillOrder> deliveries;
+  @AttributeDesc(label="Delivery")
+  private Collection<Delivery> deliveries;
 }

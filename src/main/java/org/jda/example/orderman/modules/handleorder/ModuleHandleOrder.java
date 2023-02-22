@@ -72,20 +72,20 @@ import jda.mosa.view.assets.panels.DefaultPanel;
         ,props= {
           @PropertyDesc(name=PropertyName.controller_dataController_new, valueIsClass=ExecActivityCommand.class, valueType=Class.class, valueAsString=CommonConstants.NullString)
         }
-    ),
-    containmentTree=@CTree(
+    )
+    ,containmentTree=@CTree(
         root=HandleOrder.class
         ,edges = {
             @CEdge(parent=FillOrder.class, child=CustOrder.class, 
-                scopeDesc = @ScopeDesc(stateScope = {"orderID", "orderDate", "status"}
-                      , attribDescs = {
-                          @AttributeDesc(id="orderID",editable = false),
-                          @AttributeDesc(id="orderDate",editable = false,type=JSimpleFormattedField.class),
-                      }
+                scopeDesc = @ScopeDesc(
+                    stateScope = {"orderID", "orderDate", "status"}
+                    ,attribDescs = {                        @AttributeDesc(id="orderDate",editable=false,type=JSimpleFormattedField.class),
+                        @AttributeDesc(id="orderID",editable = false)
+                    }
                 ))
         }        
-    ),
-    isPrimary=true,
+    )
+    ,isPrimary=true,
     childModules={ModuleCustOrder.class, ModuleFillOrder.class },
     setUpDesc=@SetUpDesc(postSetUp=CopyResourceFilesCommand.class)
 )
