@@ -8,6 +8,7 @@ import static jda.modules.mbsl.model.graph.NodeType.Merge;
 import static jda.mosa.controller.assets.util.AppState.Created;
 import static jda.mosa.controller.assets.util.AppState.NewObject;
 import static jda.mosa.controller.assets.util.AppState.Updated;
+import static jda.mosa.controller.assets.util.MethodName.activateView;
 import static jda.mosa.controller.assets.util.MethodName.createObject;
 import static jda.mosa.controller.assets.util.MethodName.filterInput;
 import static jda.mosa.controller.assets.util.MethodName.newObject;
@@ -95,6 +96,7 @@ import jda.mosa.controller.ControllerBasic.DataController;
 /* 7 */    
 @ANode(label="7:CustOrder",zone="6:Delivery", refCls=CustOrder.class, serviceCls=DataController.class, 
       actSeq={
+        @MAct(actName=activateView),
         @MAct(actName=showObject),
         @MAct(actName=updateObject, endStates = {Updated})
         }),

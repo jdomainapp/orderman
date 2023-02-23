@@ -33,11 +33,11 @@ public class EndOrder implements Merge {
     
     if (srcNode.getLabel().endsWith("AcceptOrNot")) {
       // rejected
-      System.out.printf("Order rejected: %s", order);
+//      System.out.printf("Order rejected: %s", order);
       order.rejected();
     } else {
       // completed
-      System.out.printf("Order completed: %s", order);
+//      System.out.printf("Order completed: %s", order);
       order.completed();
     }
     

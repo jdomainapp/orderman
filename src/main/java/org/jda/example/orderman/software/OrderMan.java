@@ -27,7 +27,7 @@ public class OrderMan {
     SoftwareAio sw = SoftwareFactory.createSoftwareAioWithMemoryBasedConfig(SwCfgCls);
     
     // debug
-    Toolkit.addDebug(ActivityGraph.class.getSimpleName());
+//    Toolkit.addDebug(ActivityGraph.class.getSimpleName());
     
     try {
       sw.exec(args);
@@ -35,18 +35,5 @@ public class OrderMan {
       e.printStackTrace();
       System.exit(1);
     }
-    
-    // old code
-//    final Class SystemCls = SCCOrderMan.class;
-//    final Class SetUpCls = DomainAppToolSetUpGen.class;
-//    
-//    SoftwareAio tool = new SoftwareToolAio(SetUpCls, SystemCls);
-//    
-//    try {
-//      tool.exec(args);
-//    } catch (Exception e) {
-//      e.printStackTrace();
-//      System.exit(1);
-//    }
   }
 }
