@@ -2,11 +2,17 @@ package org.jda.example.orderman.software.config;
 
 
 import org.jda.example.orderman.modules.customer.ModuleCustomer;
+import org.jda.example.orderman.modules.delivery.ModuleCollectPayment;
 import org.jda.example.orderman.modules.delivery.ModuleDelivery;
 import org.jda.example.orderman.modules.fillorder.ModuleFillOrder;
 import org.jda.example.orderman.modules.handleorder.ModuleHandleOrder;
+import org.jda.example.orderman.modules.invoice.ModuleInvoice;
 import org.jda.example.orderman.modules.order.ModuleCustOrder;
 import org.jda.example.orderman.modules.order.ModuleOrderLine;
+import org.jda.example.orderman.modules.payment.ModuleAcceptPayment;
+import org.jda.example.orderman.modules.payment.ModulePayment;
+import org.jda.example.orderman.modules.ship.ModuleShipOrder;
+import org.jda.example.orderman.modules.ship.ModuleShipment;
 import org.jda.example.orderman.software.ModuleMain;
 
 import jda.modules.dodm.dom.DOM;
@@ -57,7 +63,13 @@ import jda.modules.setup.model.SetUpConfig;
         ModuleFillOrder.class,
         ModuleOrderLine.class,
         ModuleCustomer.class,
-        ModuleDelivery.class
+        ModuleDelivery.class,
+        ModuleCollectPayment.class,
+        ModuleShipOrder.class,
+        ModuleInvoice.class,
+        ModuleShipment.class,
+        ModuleAcceptPayment.class,
+        ModulePayment.class,
     },
     sysModules={}, 
     setUpDesc=@SysSetUpDesc(

@@ -14,11 +14,13 @@ import static jda.modules.mccl.conceptmodel.view.RegionName.Update;
 
 import java.util.Collection;
 
+import org.jda.example.orderman.modules.delivery.model.CollectPayment;
 import org.jda.example.orderman.modules.fillorder.ModuleFillOrder;
 import org.jda.example.orderman.modules.fillorder.model.FillOrder;
 import org.jda.example.orderman.modules.handleorder.model.HandleOrder;
 import org.jda.example.orderman.modules.order.ModuleCustOrder;
 import org.jda.example.orderman.modules.order.model.CustOrder;
+import org.jda.example.orderman.modules.payment.model.AcceptPayment;
 
 import jda.modules.common.CommonConstants;
 import jda.modules.common.types.properties.PropertyDesc;
@@ -26,6 +28,7 @@ import jda.modules.common.types.properties.PropertyName;
 import jda.modules.mbsl.controller.command.ExecActivityCommand;
 import jda.modules.mccl.conceptmodel.view.RegionName;
 import jda.modules.mccl.conceptmodel.view.RegionType;
+import jda.modules.mccl.conceptmodel.view.StyleName;
 import jda.modules.mccl.syntax.ModuleDescriptor;
 import jda.modules.mccl.syntax.SetUpDesc;
 import jda.modules.mccl.syntax.containment.CEdge;
@@ -83,11 +86,25 @@ import jda.mosa.view.assets.panels.DefaultPanel;
                         @AttributeDesc(id="orderID",editable = false)
                     }
                 ))
+            , @CEdge(parent=CollectPayment.class, child=CustOrder.class, 
+                scopeDesc = @ScopeDesc(
+                    stateScope = {"orderID", "orderDate", "status"}
+                    ,attribDescs = {                        @AttributeDesc(id="orderDate",editable=false,type=JSimpleFormattedField.class),
+                        @AttributeDesc(id="orderID",editable = false)
+                    }
+                ))
+            ,@CEdge(parent=AcceptPayment.class, child=CustOrder.class, 
+            scopeDesc = @ScopeDesc(
+                stateScope = {"orderID", "orderDate", "status"}
+                ,attribDescs = {                        @AttributeDesc(id="orderDate",editable=false,type=JSimpleFormattedField.class),
+                    @AttributeDesc(id="orderID",editable = false)
+                }
+            ))
         }        
     )
-    ,isPrimary=true,
-    childModules={ModuleCustOrder.class, ModuleFillOrder.class },
-    setUpDesc=@SetUpDesc(postSetUp=CopyResourceFilesCommand.class)
+    ,isPrimary=true
+    ,childModules={ModuleCustOrder.class, ModuleFillOrder.class }
+    ,setUpDesc=@SetUpDesc(postSetUp=CopyResourceFilesCommand.class)
 )
 public class ModuleHandleOrder {
   @AttributeDesc(label="Order Handling")
@@ -97,6 +114,8 @@ public class ModuleHandleOrder {
   @AttributeDesc(label="Receive order",
       type=DefaultPanel.class,
       layoutBuilderType=TwoColumnLayoutBuilder.class
+      ,styleLabel=StyleName.Heading4DarkYellow
+      ,styleField=StyleName.DefaultOnLightYellow
       ,controllerDesc=@ControllerDesc(
           openPolicy=OpenPolicy.I))
   private Collection<CustOrder> orders;

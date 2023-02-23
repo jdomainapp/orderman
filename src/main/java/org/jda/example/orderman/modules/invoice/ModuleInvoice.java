@@ -1,14 +1,18 @@
 package org.jda.example.orderman.modules.invoice;
 
+import org.jda.example.orderman.modules.customer.model.Customer;
 import org.jda.example.orderman.modules.invoice.model.Invoice;
+import org.jda.example.orderman.modules.order.model.CustOrder;
 import org.jda.example.orderman.util.model.StatusCode;
 
 import jda.modules.mccl.conceptmodel.view.RegionType;
+import jda.modules.mccl.syntax.MCCLConstants;
 import jda.modules.mccl.syntax.ModuleDescriptor;
 import jda.modules.mccl.syntax.model.ModelDesc;
 import jda.modules.mccl.syntax.view.AttributeDesc;
 import jda.modules.mccl.syntax.view.ViewDesc;
 import jda.mosa.view.View;
+import jda.mosa.view.assets.datafields.JTextField;
 import jda.mosa.view.assets.datafields.list.JComboField;
 
 /**
@@ -32,12 +36,23 @@ import jda.mosa.view.assets.datafields.list.JComboField;
   isPrimary=true
 )
 public class ModuleInvoice {
+  
   @AttributeDesc(label="Invoice")
   private String title;
-  
-  @AttributeDesc(label="Id")
+
+  @AttributeDesc(label="Invoice Id")
   private int id;
 
+  @AttributeDesc(label="Customer",
+      width = 20, height=MCCLConstants.STANDARD_FIELD_HEIGHT,
+      type=JTextField.class, editable=false)
+  private Customer customer;
+
+  @AttributeDesc(label="Order",
+      width = 20, height=MCCLConstants.STANDARD_FIELD_HEIGHT,
+      type=JTextField.class, editable=false)
+  private CustOrder order;
+  
   @AttributeDesc(label="Status", type=JComboField.class)
   private StatusCode status;  
 }

@@ -1,6 +1,7 @@
 package org.jda.example.orderman.modules.payment.model;
 
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
@@ -52,29 +53,25 @@ public class CustomerPaymentProcess {
    *    {{@link Payment#A_payDetails}, {@link Payment#A_description}, {@link Payment#A_status}}
    *   </pre>
    */
-  public Map<String, Object> execute(CustOrder order) {
+  public Map<String, Object> execute(Payment payment) {
     // TODO: simulate the following payment process (e.g. showing the progress
     // on a GUI)
 
-    // (1) compute payment amount from the enrolled course modules
-    // Collection<Product> modules = order.getModules();
-    // double amount = computePaymentByProducts(modules);
-    //
     // // (2) look up the payment details of order
-    // PaymentProfile payProf = lookUpPaymentProfile(order);
+     PaymentProfile payProf = lookUpPaymentProfile(payment);
     //
     // // (3) contact the bank to request for payment of the specified amount
-    // String desc = "Enrolment payment for " + order;
-    // PaymentStatus payResult = requestPayment(payProf, desc, amount);
+     String desc = "Payment for: " + payment;
+     PaymentStatus payResult = requestPayment(payProf, desc, payment.getAmount());
     //
     // // (4) return result
     Map<String, Object> result = null;
-    // if (payResult != null) {
-    // result = new HashMap<>();
-    // result.put(Payment.A_payDetails, payProf.getDetailsAsString());
-    // result.put(Payment.A_description, desc);
-    // result.put(Payment.A_status, payResult);
-    // }
+     if (payResult != null) {
+       result = new HashMap<>();
+       result.put(Payment.A_payDetails, payProf.getDetailsAsString());
+       result.put(Payment.A_description, desc);
+       result.put(Payment.A_status, payResult);
+     }
 
     return result;
   }
@@ -112,7 +109,7 @@ public class CustomerPaymentProcess {
    * @effects retrieve and return the PaymentProfile of <tt>order</tt>
    * 
    */
-  private PaymentProfile lookUpPaymentProfile(CustOrder order) {
+  private PaymentProfile lookUpPaymentProfile(Payment payment) {
     // TODO store payment profile in data store and retrieve them
     // for now, assume the same profile for all orders
     return Fixed_Payment_Profile;

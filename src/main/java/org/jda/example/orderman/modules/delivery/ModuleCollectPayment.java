@@ -3,24 +3,24 @@ package org.jda.example.orderman.modules.delivery;
 import java.util.Collection;
 
 import org.jda.example.orderman.modules.delivery.model.CollectPayment;
-import org.jda.example.orderman.modules.delivery.model.Delivery;
+import org.jda.example.orderman.modules.invoice.model.Invoice;
 import org.jda.example.orderman.modules.order.model.CustOrder;
-import org.jda.example.orderman.modules.ship.model.ShipOrder;
+import org.jda.example.orderman.modules.payment.model.AcceptPayment;
 
 import jda.modules.mccl.conceptmodel.view.RegionName;
 import jda.modules.mccl.conceptmodel.view.RegionType;
+import jda.modules.mccl.conceptmodel.view.StyleName;
 import jda.modules.mccl.syntax.MCCLConstants;
 import jda.modules.mccl.syntax.ModuleDescriptor;
-import jda.modules.mccl.syntax.SetUpDesc;
 import jda.modules.mccl.syntax.controller.ControllerDesc;
 import jda.modules.mccl.syntax.controller.ControllerDesc.OpenPolicy;
 import jda.modules.mccl.syntax.model.ModelDesc;
 import jda.modules.mccl.syntax.view.AttributeDesc;
 import jda.modules.mccl.syntax.view.ViewDesc;
-import jda.modules.setup.commands.CopyResourceFilesCommand;
 import jda.mosa.view.View;
 import jda.mosa.view.assets.datafields.JTextField;
-import jda.mosa.view.assets.layout.TabLayoutBuilder;
+import jda.mosa.view.assets.layout.SequentialLayoutBuilder;
+import jda.mosa.view.assets.layout.TwoColumnLayoutBuilder;
 import jda.mosa.view.assets.panels.DefaultPanel;
 
 /**
@@ -32,49 +32,55 @@ import jda.mosa.view.assets.panels.DefaultPanel;
  */
 
 @ModuleDescriptor(
-    name="Delivery",
+    name="CollectPayment",
   modelDesc=@ModelDesc(
-      model=Delivery.class
+      model=CollectPayment.class
   ),
   viewDesc=@ViewDesc(
-      formTitle="Delivery",
-      imageIcon="delivery.gif",
+      formTitle="Collect payment",
+      imageIcon="collect-payment.gif",
       viewType=RegionType.Data,
       view=View.class,
       parent=RegionName.Tools,
-      layoutBuilderType=TabLayoutBuilder.class,
+      layoutBuilderType=SequentialLayoutBuilder.class,
       topX=0.5,topY=0.0,widthRatio=0.5f,heightRatio=0.7f
   ),
   isPrimary=true
-  ,setUpDesc=@SetUpDesc(postSetUp=CopyResourceFilesCommand.class)
 )
-public class ModuleDelivery {
-  @AttributeDesc(label="Delivery")
+public class ModuleCollectPayment {
+  @AttributeDesc(label="Collect Payment")
   private String title;
   
-  @AttributeDesc(label="Delivery Id")
+  @AttributeDesc(label="Collect Payment Id")
   private int id;
   
   @AttributeDesc(label="Received order",
       width = 20, height=MCCLConstants.STANDARD_FIELD_HEIGHT,
       type=JTextField.class, editable=false
-      ,isVisible = false
-      )
+      ,isVisible = false)
   private CustOrder receivedOrder;
 
-  @AttributeDesc(label="Collect payment"
-    ,type=DefaultPanel.class
-//    ,layoutBuilderType=TwoColumnLayoutBuilder.class
+  // invoice
+  @AttributeDesc(label="Invoice"
+      ,type=DefaultPanel.class
+      ,styleLabel=StyleName.Heading4DarkYellow
+      ,styleField=StyleName.DefaultOnLightYellow
       ,controllerDesc=@ControllerDesc(
           openPolicy=OpenPolicy.I))
-  private Collection<CollectPayment> collectPayments;
+  private Collection<Invoice> invoices;
   
-  // fill order
-  @AttributeDesc(label="Ship order"
+  // orders
+//  @AttributeDesc(label="Update order"
+//    ,type=DefaultPanel.class
+//    ,controllerDesc=@ControllerDesc(
+//          openPolicy=OpenPolicy.I))
+//  private Collection<CustOrder> orders;
+
+  @AttributeDesc(label="Accept payment"
       ,type=DefaultPanel.class
-//      ,layoutBuilderType=TwoColumnLayoutBuilder.class
-        ,controllerDesc=@ControllerDesc(
+      ,styleLabel=StyleName.Heading4DarkYellow
+      ,styleField=StyleName.DefaultOnLightYellow
+      ,controllerDesc=@ControllerDesc(
             openPolicy=OpenPolicy.I))
-  private Collection<ShipOrder> shipOrders;
-  
+  private Collection<AcceptPayment> acceptPayments;
 }

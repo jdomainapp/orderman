@@ -1,9 +1,14 @@
 package org.jda.example.orderman.modules.handleorder.control.model;
 
+import java.util.Arrays;
 import java.util.Map;
+
+import org.jda.example.orderman.modules.order.model.CustOrder;
+import org.jda.example.orderman.modules.ship.model.Shipment;
 
 import jda.modules.common.exceptions.NotPossibleException;
 import jda.modules.dcsl.syntax.DClass;
+import jda.modules.mbsl.exceptions.DomainMessage;
 import jda.modules.mbsl.model.graph.Node;
 import jda.modules.mbsl.model.util.Join;
 
@@ -29,39 +34,23 @@ public class CompleteOrder implements Join {
   public Object[] transform(Node joinNode, Object[] args)
       throws NotPossibleException {
     
-//    Payment payment = null; Authorisation authorisation = null; Student student;
-//    Boolean approved;
+    CustOrder order = null; Shipment shipment = null;
+    Boolean approved;
     
-    /*
     for (Object o : args) {
-      if (o instanceof Payment) {
-        payment = (Payment) o;
-      } else if (o instanceof Authorisation) {
-        authorisation  = (Authorisation) o;
+      if (o instanceof CustOrder) {
+        order = (CustOrder) o;
+      } else if (o instanceof Shipment) {
+        shipment  = (Shipment) o;
       }
     }
     
-    if (payment == null || authorisation == null) {
+    if (order == null || shipment == null) {
       // should not happen
       throw new NotPossibleException(DomainMessage.ERR_FAIL_TO_FILTER_JOIN_INPUT, new Object[] {joinNode, Arrays.toString(args)});
     } else {      
-//      student = payment.getStudent();
-//      approved = EnrolmentApproval.deriveApproved(payment, authorisation);
-//      
-//      Map<String,Object> attribValMap = new HashMap<>();
-//      
-//      attribValMap.put("student", student);
-//      attribValMap.put("payment", payment);
-//      attribValMap.put("authorisation", authorisation);
-//      attribValMap.put("approved", approved);
-//      
-//      return attribValMap;
-      
-      student = payment.getStudent();
-      approved = EnrolmentApproval.deriveApproved(payment, authorisation);
-      return new Object[] {student, payment, authorisation, approved};
-      */
-    // todo
-    return new Object[] {};
+      approved = order.getPayment().isCompleted() && shipment.isCompleted();
+      return new Object[] {order, shipment, approved};
     }
   }
+}

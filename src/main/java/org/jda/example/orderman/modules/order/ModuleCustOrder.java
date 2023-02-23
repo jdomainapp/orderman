@@ -53,7 +53,7 @@ public class ModuleCustOrder {
   @AttributeDesc(label="Order id")
   private int orderID;
 
-  @AttributeDesc(label="Date",type=JDateFieldSimple.class)
+  @AttributeDesc(label="Order date",type=JDateFieldSimple.class)
   private Date orderDate;
 
   @AttributeDesc(label="Customer")

@@ -1,10 +1,11 @@
-package org.jda.example.orderman.modules.fillorder;
+package org.jda.example.orderman.modules.payment;
 
 import java.util.Collection;
 
-import org.jda.example.orderman.modules.delivery.model.Delivery;
-import org.jda.example.orderman.modules.fillorder.model.FillOrder;
+import org.jda.example.orderman.modules.invoice.model.Invoice;
 import org.jda.example.orderman.modules.order.model.CustOrder;
+import org.jda.example.orderman.modules.payment.model.AcceptPayment;
+import org.jda.example.orderman.modules.payment.model.Payment;
 
 import jda.modules.mccl.conceptmodel.view.RegionName;
 import jda.modules.mccl.conceptmodel.view.RegionType;
@@ -20,6 +21,7 @@ import jda.mosa.view.View;
 import jda.mosa.view.assets.datafields.JTextField;
 import jda.mosa.view.assets.layout.SequentialLayoutBuilder;
 import jda.mosa.view.assets.layout.TwoColumnLayoutBuilder;
+import jda.mosa.view.assets.panels.DefaultPanel;
 
 /**
  * @overview 
@@ -30,13 +32,13 @@ import jda.mosa.view.assets.layout.TwoColumnLayoutBuilder;
  */
 
 @ModuleDescriptor(
-    name="FillOrder",
+    name="AcceptPayment",
   modelDesc=@ModelDesc(
-      model=FillOrder.class
+      model=AcceptPayment.class
   ),
   viewDesc=@ViewDesc(
-      formTitle="Fill order",
-      imageIcon="fulfillment.gif",
+      formTitle="Accept payment",
+      imageIcon="accept-payment.gif",
       viewType=RegionType.Data,
       view=View.class,
       parent=RegionName.Tools,
@@ -45,33 +47,33 @@ import jda.mosa.view.assets.layout.TwoColumnLayoutBuilder;
   ),
   isPrimary=true
 )
-public class ModuleFillOrder {
-  @AttributeDesc(label="Fill Order")
+public class ModuleAcceptPayment {
+  @AttributeDesc(label="Accept Payment")
   private String title;
   
-  @AttributeDesc(label="Fullfill Id")
-  private int id;
-  
-  @AttributeDesc(label="Fulfill order",
+  @AttributeDesc(label="Invoice",
       width = 20, height=MCCLConstants.STANDARD_FIELD_HEIGHT,
       type=JTextField.class, editable=false)
-  private CustOrder receivedOrder;
+  private Invoice invoice;
 
-  // receive order 
+  // payment
+  @AttributeDesc(label="Payments"
+      ,type=DefaultPanel.class
+      ,styleLabel=StyleName.Heading4DarkYellow
+      ,styleField=StyleName.DefaultOnLightYellow
+      ,layoutBuilderType=TwoColumnLayoutBuilder.class
+      ,controllerDesc=@ControllerDesc(
+          openPolicy=OpenPolicy.I))
+  private Collection<Payment> payments;
+  
+  // orders
   @AttributeDesc(label="Update order"
-    ,styleLabel=StyleName.Heading4DarkYellow
-    ,styleField=StyleName.DefaultOnLightYellow
-    ,layoutBuilderType=TwoColumnLayoutBuilder.class
+      ,type=DefaultPanel.class
+      ,styleLabel=StyleName.Heading4DarkYellow
+      ,styleField=StyleName.DefaultOnLightYellow
+      ,layoutBuilderType=TwoColumnLayoutBuilder.class
       ,controllerDesc=@ControllerDesc(
           openPolicy=OpenPolicy.I))
   private Collection<CustOrder> orders;
-  
-  // fill order
-  @AttributeDesc(label="Delivery"
-      ,styleLabel=StyleName.Heading4DarkYellow
-      ,styleField=StyleName.DefaultOnLightYellow
-      ,controllerDesc=@ControllerDesc(
-          openPolicy=OpenPolicy.I)
-      )
-  private Collection<Delivery> deliveries;
+
 }

@@ -35,9 +35,7 @@ public class FillOrder {
   private CustOrder receivedOrder;
   
   // order 
-  @DAttr(name="orders", type=Type.Collection,filter=@Select(clazz=CustOrder.class
-//      ,attributes = {"orderID", "orderDate", "status", "fillOrder"}
-  )
+  @DAttr(name="orders", type=Type.Collection,filter=@Select(clazz=CustOrder.class)
   ,serialisable=false)
   @DAssoc(ascName="fill-order",role="mgmt",
     ascType=AssocType.One2Many,endType=AssocEndType.One,
@@ -94,19 +92,6 @@ public class FillOrder {
   }
   
   
-  // proxy methods for CustOrder (needed to pass details along to the outgoing CustOrder node
-//  public int getOrderID() {
-//    return receivedOrder != null ? receivedOrder.getOrderID() : null;
-//  }
-//
-//  public Date getOrderDate() {
-//    return receivedOrder != null ? receivedOrder.getOrderDate() : null;
-//  }
-//
-//  public OrderStatus getStatus() {
-//    return receivedOrder != null ? receivedOrder.getStatus() : null;
-//  }
-
   /**
    * @effects 
    * 

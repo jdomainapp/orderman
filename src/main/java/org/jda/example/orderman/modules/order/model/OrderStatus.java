@@ -15,7 +15,7 @@ public enum OrderStatus {
   FILL("Filled"),
   INVO("Invoiced"),
   CLOS("Closed"),
-  REJE("Rejected"),
+  REJE("Rejected"), PAID("Paid"),
   ;
   
   private String name;

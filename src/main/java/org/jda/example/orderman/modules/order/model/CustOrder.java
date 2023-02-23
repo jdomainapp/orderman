@@ -5,8 +5,11 @@ import java.util.Date;
 import java.util.List;
 
 import org.jda.example.orderman.modules.customer.model.Customer;
+import org.jda.example.orderman.modules.delivery.model.CollectPayment;
 import org.jda.example.orderman.modules.fillorder.model.FillOrder;
 import org.jda.example.orderman.modules.handleorder.model.HandleOrder;
+import org.jda.example.orderman.modules.payment.model.AcceptPayment;
+import org.jda.example.orderman.modules.payment.model.Payment;
 
 import jda.modules.common.cache.StateHistory;
 import jda.modules.common.exceptions.ConstraintViolationException;
@@ -73,6 +76,11 @@ public class CustOrder {
       )
   private OrderStatus status;
   
+  
+  // hard link to Payment
+  @DAttr(name="payment", type=Type.Domain, mutable=false, auto=true)
+  private Payment payment;
+  
   // virtual link to HandleOrder
   @DAttr(name="handleOrder",type=Type.Domain,serialisable=false,virtual=true)
   private HandleOrder handleOrder;
@@ -81,6 +89,14 @@ public class CustOrder {
   @DAttr(name="fillOrder",type=Type.Domain,serialisable=false,virtual=true)
   private FillOrder fillOrder;
   
+  //  virtual link
+  @DAttr(name="collectPayment",type=Type.Domain,serialisable=false,virtual=true)
+  private CollectPayment collectPayment;
+
+  //  virtual link
+  @DAttr(name="acceptPayment",type=Type.Domain,serialisable=false,virtual=true)
+  private AcceptPayment acceptPayment;
+
   public CustOrder(Integer orderID, Date orderDate, 
       Customer customer,
       List<OrderLine> lines,
@@ -311,6 +327,23 @@ public class CustOrder {
     this.status = status;
   }
 
+  /**
+   * @effects return payment
+   */
+  public Payment getPayment() {
+    return payment;
+  }
+
+  /**
+   * @effects set payment = payment
+   */
+  public boolean setPayment(Payment payment) {
+    this.payment = payment;
+    
+    // update this status
+    return wasPaid();
+  }
+
   @Override
   public String toString() {
     return "CustOrder (" + orderID + ", " + customer + ")";
@@ -383,6 +416,28 @@ public class CustOrder {
   public boolean isRejected() {
     return status.isRejected();
   }
+
+  /**
+   * @effects  
+   *  update this.status to INVOICED
+   * 
+   */
+  public boolean wasInvoiced() {
+    this.status = OrderStatus.INVO;
+    
+    return true;
+  }
   
+  /**
+   * @effects 
+   * 
+   * @version 
+   * 
+   */
+  public boolean wasPaid() {
+    this.status = OrderStatus.PAID;
+    
+    return true;
+  }
   
 }

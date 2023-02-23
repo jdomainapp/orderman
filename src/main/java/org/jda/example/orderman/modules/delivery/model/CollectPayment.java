@@ -1,11 +1,11 @@
-package org.jda.example.orderman.modules.payment.model;
+package org.jda.example.orderman.modules.delivery.model;
 
 import java.util.Collection;
 import java.util.Objects;
 
-import org.jda.example.orderman.modules.delivery.model.CollectPayment;
 import org.jda.example.orderman.modules.invoice.model.Invoice;
 import org.jda.example.orderman.modules.order.model.CustOrder;
+import org.jda.example.orderman.modules.payment.model.AcceptPayment;
 
 import jda.modules.dcsl.syntax.DAssoc;
 import jda.modules.dcsl.syntax.DAssoc.AssocEndType;
@@ -25,29 +25,29 @@ import jda.modules.dcsl.syntax.Select;
  * @version 
  */
 @DClass(serialisable=false)
-public class AcceptPayment {
+public class CollectPayment {
   @DAttr(name = "id", id = true, auto = true, type = Type.Integer, length = 5, 
       optional = false, mutable = false)
   private int id;
   private static int idCounter = 0;
   
-  @DAttr(name="invoice", type=Type.Domain, mutable=false)
-  private Invoice invoice;
+  @DAttr(name="receivedOrder", type=Type.Domain, mutable=false,serialisable=false)
+  private CustOrder receivedOrder;
   
-  // payment
-  @DAttr(name="payments", type=Type.Collection,filter=@Select(clazz=Payment.class),serialisable=false)
-  @DAssoc(ascName="payment",role="mgmt",
+  // invoice
+  @DAttr(name="invoices", type=Type.Collection,filter=@Select(clazz=Invoice.class),serialisable=false)
+  @DAssoc(ascName="invoice",role="mgmt",
     ascType=AssocType.One2Many,endType=AssocEndType.One,
     associate=@Associate(
-        type=Payment.class,cardMin=0,cardMax=DCSLConstants.CARD_MORE,
+        type=Invoice.class,cardMin=0,cardMax=DCSLConstants.CARD_MORE,
         updateLink=false
      ))
-  private Collection<Payment> payments;
+  private Collection<Invoice> invoices;
 
   // order 
   @DAttr(name="orders", type=Type.Collection,filter=@Select(clazz=CustOrder.class)
   ,serialisable=false)
-  @DAssoc(ascName="payment-order",role="mgmt",
+  @DAssoc(ascName="invoice-order",role="mgmt",
     ascType=AssocType.One2Many,endType=AssocEndType.One,
     associate=@Associate(
         type=CustOrder.class,cardMin=0,cardMax=DCSLConstants.CARD_MORE,
@@ -55,18 +55,29 @@ public class AcceptPayment {
      ))
   private Collection<CustOrder> orders;
   
+  // accept payment
+  @DAttr(name="acceptPayments", type=Type.Collection,filter=@Select(clazz=AcceptPayment.class)
+  ,serialisable=false)
+  @DAssoc(ascName="collect-accept-payment",role="mgmt",
+    ascType=AssocType.One2Many,endType=AssocEndType.One,
+    associate=@Associate(
+        type=AcceptPayment.class,cardMin=0,cardMax=DCSLConstants.CARD_MORE,
+        updateLink=false
+     ))
+  private Collection<AcceptPayment> acceptPayments;
+  
   // virtual link
-  @DAttr(name="collectPayment",type=Type.Domain,serialisable=false,virtual=true)
-  private CollectPayment collectPayment;
+  @DAttr(name="delivery",type=Type.Domain,serialisable=false,virtual=true)
+  private Delivery delivery;
   
   
-  public AcceptPayment(Integer id, Invoice invoice) {
+  public CollectPayment(Integer id, CustOrder receivedOrder) {
     this.id = nextID(id);
-    this.invoice = invoice;
+    this.receivedOrder = receivedOrder;
   }
 
-  public AcceptPayment(Invoice invoice) {
-    this(null,invoice);
+  public CollectPayment(CustOrder receivedOrder) {
+    this(null,receivedOrder);
   }
   
   /**
@@ -78,17 +89,17 @@ public class AcceptPayment {
 
   
   /**
-   * @effects return invoice
+   * @effects return receivedOrder
    */
-  public Invoice getInvoice() {
-    return invoice;
+  public CustOrder getReceivedOrder() {
+    return receivedOrder;
   }
   
   /**
-   * @effects set this.invoice = invoice
+   * @effects set receivedOrder = receivedOrder
    */
-  public void setInvoice(Invoice invoice) {
-    this.invoice = invoice;
+  public void setReceivedOrder(CustOrder receivedOrder) {
+    this.receivedOrder = receivedOrder;
   }
   
   
@@ -99,7 +110,7 @@ public class AcceptPayment {
    */
   @Override
   public String toString() {
-    return "AcceptPayment (" + id + ")";
+    return "CollectPayment (" + id + ")";
   }
 
   /**
@@ -125,7 +136,7 @@ public class AcceptPayment {
       return false;
     if (getClass() != obj.getClass())
       return false;
-    AcceptPayment other = (AcceptPayment) obj;
+    CollectPayment other = (CollectPayment) obj;
     return id == other.id;
   }
   
@@ -144,4 +155,3 @@ public class AcceptPayment {
     }
   }
 }
-

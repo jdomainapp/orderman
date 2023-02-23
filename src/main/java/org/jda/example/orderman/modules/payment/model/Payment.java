@@ -2,15 +2,12 @@ package org.jda.example.orderman.modules.payment.model;
 
 import java.util.Map;
 
-import org.jda.example.orderman.modules.order.model.CustOrder;
+import org.jda.example.orderman.modules.customer.model.Customer;
+import org.jda.example.orderman.modules.invoice.model.Invoice;
 
 import jda.modules.common.exceptions.ConstraintViolationException;
 import jda.modules.common.types.Tuple;
 import jda.modules.dcsl.syntax.AttrRef;
-import jda.modules.dcsl.syntax.DAssoc;
-import jda.modules.dcsl.syntax.DAssoc.AssocEndType;
-import jda.modules.dcsl.syntax.DAssoc.AssocType;
-import jda.modules.dcsl.syntax.DAssoc.Associate;
 import jda.modules.dcsl.syntax.DAttr;
 import jda.modules.dcsl.syntax.DAttr.Type;
 import jda.modules.dcsl.syntax.DClass;
@@ -24,7 +21,7 @@ import jda.modules.dcsl.syntax.DOpt;
  *
  * @version 
  */
-@DClass(mutable=false)
+@DClass()
 public class Payment {
 
   public static final String A_student = "student";
@@ -41,12 +38,10 @@ public class Payment {
     // attributes
     @DAttr(name = "id", type = Type.Integer, id = true, auto = true, optional = false, mutable = false, min = 1)
     private int id;
+    private static int idCounter;
 
-    @DAttr(name = A_student, type = Type.Domain
-        //, auto=true
-        , mutable=false, optional = false)
-    @DAssoc(ascName = "std-has-payment", role = "enr", ascType = AssocType.One2Many, endType = AssocEndType.Many, associate = @Associate(type = CustOrder.class, cardMin = 1, cardMax = 1), dependsOn = true)
-    private CustOrder student;
+    @DAttr(name="acceptPayment", type=Type.Domain, mutable=false, auto=true, serialisable=false)
+    private AcceptPayment acceptPayment;
 
     @DAttr(name = A_payDetails, type = Type.String, length = 255, auto=true, mutable=false)
     private String payDetails;
@@ -54,30 +49,36 @@ public class Payment {
     @DAttr(name = A_description, type = Type.String, length = 255, auto=true, mutable=false)
     private String description;
 
+    @DAttr(name = "amount", type = Type.Double)
+    private double amount;
+    
     @DAttr(name = A_status, type = Type.Domain
         // not supported for Domain-typed attribute: auto=true
         , mutable=false
         )
     private PaymentStatus status;
 
+    
+    // derived from acceptPayment
+    @DAttr(name="invoice", type=Type.Domain, mutable=false, auto=true)
+    private Invoice invoice;
+
+    // derived from invoice
+    @DAttr(name="customer", type=Type.Domain, mutable=false, auto=true, serialisable=false)
+    private Customer customer;
+    
     /***
      * derived from {@link #status}
      */
     @DAttr(name = "statusStr", type = Type.String, length=20, auto=true, mutable=false, serialisable=false)
     private String statusStr;
-    
-    // virtual link to FEnrolmentProcessing
-//    @DAttr(name="fEnrolmentProc",type=Type.Domain,serialisable=false)
-//    private FEnrolmentProcessing fEnrolmentProc;
-    
-    // virtual link to EnrolmentProcessing
-//    @DAttr(name=A_enrolmentProc,type=Type.Domain,serialisable=false)
-//    private EnrolmentProcessing enrolmentProc;
+
+    //  virtual link
+//    @DAttr(name="acceptPayment",type=Type.Domain,serialisable=false,virtual=true)
+//    private AcceptPayment acceptPayment;
     
     /*** END: state space**/
     
-    private static int idCounter;
-
     @DOpt(type = DOpt.Type.Getter)
     @AttrRef(value = "id")
     public int getId() {
@@ -100,18 +101,54 @@ public class Payment {
         return val;
     }
 
-    @DOpt(type = DOpt.Type.Getter)
-    @AttrRef(value = "student")
-    public CustOrder getOrder() {
-        return this.student;
-    }
-
 //    @DOpt(type = DOpt.Type.Setter)
 //    @AttrRef(name = "student")
 //    public void setOrder(Order student) {
 //        this.student = student;
 //    }
 
+    /**
+     * This constructor is used for loading objects from data source and for creating a new one 
+     * from the object form. In the latter case, it executes the Payment process.
+     *  
+     * @effects 
+     *  initialises this 
+     *  
+     *  if creating new object from the form
+     *    executes the payment process 
+     *  
+     *  obtain the result and initialise {@link #payDetails}, {@link #description}, {@link #status}.
+     */
+    @DOpt(type = DOpt.Type.DataSourceConstructor)
+    @DOpt(type = DOpt.Type.ObjectFormConstructor)
+    public Payment(Integer id, String paymentDetails, String description, Double amount, PaymentStatus status) throws ConstraintViolationException {
+        if (id == null) {
+          // object from
+          this.id = genId(null);
+          
+          // executes the payment process
+          Map<String, Object> result = executePayment();
+          
+          // initialise rest of the attributes according to the result obtained
+          if (result != null) {
+            this.payDetails = (String) result.get(A_payDetails);
+            this.description = (String) result.get(A_description);
+            this.status = (PaymentStatus) result.get(A_status);
+            
+            this.statusStr = status.name();
+          }
+        } else {
+          // data source
+          this.id = genId(id);
+          this.payDetails = paymentDetails;
+          this.description = description;
+          this.status = status;
+          this.amount = amount;
+          this.statusStr = status.name();
+        }
+        
+    }
+    
     @DOpt(type = DOpt.Type.Getter)
     @AttrRef(value = "paymentDetails")
     public String getPayDetails() {
@@ -164,6 +201,8 @@ public class Payment {
     }
 
     
+    
+    
 //    /**
 //     * @effects return enrolmentProc
 //     */
@@ -178,45 +217,39 @@ public class Payment {
 //      this.enrolmentProc = enrolmentProc;
 //    }
     
-    @DOpt(type = DOpt.Type.DataSourceConstructor)
-    public Payment(Integer id, CustOrder student, String paymentDetails, String description, PaymentStatus status) throws ConstraintViolationException {
-        this.id = genId(id);
-        this.student = student;
-        this.payDetails = paymentDetails;
-        this.description = description;
-        this.status = status;
-        
-        this.statusStr = status.name();
+    /**
+     * @effects return acceptPayment
+     */
+    public AcceptPayment getAcceptPayment() {
+      return acceptPayment;
     }
 
     /**
-     * This constructor is exclusively used to execute the Payment process. 
-     * All it needs to know is a Order object.
-     *  
-     * @effects 
-     *  initialises this with {@link #student} = student
-     *  executes the payment process 
-     *  obtain the result and initialise {@link #payDetails}, {@link #description}, {@link #status}.
+     * @effects set acceptPayment = acceptPayment
      */
-    @DOpt(type = DOpt.Type.ObjectFormConstructor)
-    //@DOpt(type = DOpt.Type.RequiredConstructor)
-    public Payment(CustOrder student) throws ConstraintViolationException {
-      this.id = genId(null);
-      this.student = student;
+    public boolean setAcceptPayment(AcceptPayment acceptPayment) {
+      this.acceptPayment = acceptPayment;
       
-      // executes the payment process
-      Map<String, Object> result = executeEnrolPayment(student);
+      this.invoice = acceptPayment.getInvoice();
+      this.customer = invoice.getCustomer();
       
-      // initialise rest of the attributes according to the result obtained
-      if (result != null) {
-        this.payDetails = (String) result.get(A_payDetails);
-        this.description = (String) result.get(A_description);
-        this.status = (PaymentStatus) result.get(A_status);
-        
-        this.statusStr = status.name();
-      }
+      return true;
     }
-    
+
+    /**
+     * @effects return invoice
+     */
+    public Invoice getInvoice() {
+      return invoice;
+    }
+
+    /**
+     * @effects return customer
+     */
+    public Customer getCustomer() {
+      return customer;
+    }
+
     /**
      * This constructor is exclusively used to execute the Payment process. 
      * All it needs to know is either a Order or 
@@ -263,8 +296,8 @@ public class Payment {
      *  return result as {@link Map}<String,Object>, whose keys are 
      *    {{@link #A_payDetails}, {@link #A_description}, {@link #A_status}}
      */
-    private Map<String, Object> executeEnrolPayment(CustOrder student) {
-      return CustomerPaymentProcess.getInstance().execute(student);
+    private Map<String, Object> executePayment() {
+      return CustomerPaymentProcess.getInstance().execute(this);
     }
 
 //    @DOpt(type = DOpt.Type.ObjectFormConstructor)
@@ -295,6 +328,15 @@ public class Payment {
         }
     }
 
+
+    /**
+     * @effects 
+     * 
+     */
+    public boolean isCompleted() {
+      return status.equals(PaymentStatus.ACCEPTED);
+    }
+    
     /* (non-Javadoc)
      * @see java.lang.Object#toString()
      */
@@ -305,7 +347,7 @@ public class Payment {
      */
     @Override
     public String toString() {
-      return "Payment (" + id + ", " + student + ", " + payDetails + ")";
+      return "Payment (" + id + ", " + customer + ", " + payDetails + ")";
     }
 
     /* (non-Javadoc)
@@ -344,5 +386,17 @@ public class Payment {
       if (id != other.id)
         return false;
       return true;
+    }
+
+    /**
+     * @effects 
+     * 
+     */
+    public double getAmount() {
+      return amount;
+    }
+    
+    public void setAmount(double amount) {
+      this.amount = amount;
     }
 }
