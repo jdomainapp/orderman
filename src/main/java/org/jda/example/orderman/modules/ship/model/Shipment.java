@@ -6,8 +6,11 @@ import org.jda.example.orderman.modules.customer.model.Customer;
 import org.jda.example.orderman.modules.order.model.CustOrder;
 import org.jda.example.orderman.util.model.StatusCode;
 
+import jda.modules.common.exceptions.ConstraintViolationException;
+import jda.modules.common.types.Tuple;
 import jda.modules.dcsl.syntax.DAttr;
 import jda.modules.dcsl.syntax.DAttr.Type;
+import jda.modules.dcsl.syntax.DOpt;
 
 /**
  * @overview 
@@ -21,17 +24,14 @@ public class Shipment {
   private int id;
   private static int idCounter;
   
-  @DAttr(name="order", type=Type.Domain, mutable=false, auto=true)
+  @DAttr(name="order", type=Type.Domain, mutable=false)
   private CustOrder order;
 
   // derived from order
-  @DAttr(name="customer", type=Type.Domain, mutable=false, auto=true)
+  @DAttr(name="customer", type=Type.Domain, mutable=false, auto=true, serialisable=false)
   private Customer customer;
   
-  @DAttr(name = "status", type = Type.Domain
-      // not supported for Domain-typed attribute: auto=true
-      , mutable=false
-      )
+  @DAttr(name = "status", type = Type.Domain)
   private StatusCode status;
 
   //  virtual link
@@ -39,16 +39,16 @@ public class Shipment {
   private ShipOrder shipOrder;
   
   // data source
-  public Shipment(Integer id, CustOrder order, Customer customer, StatusCode status) {
+  public Shipment(Integer id, CustOrder order, StatusCode status) {
     this.id = nextID(id);
     this.order = order;
-    this.customer = customer; 
+    this.customer = order.getCustomer();
     this.status = status;
   }
   
   // object form
-  public Shipment(CustOrder order, Customer customer, StatusCode status) {
-    this(null, order, customer, status);
+  public Shipment(CustOrder order, StatusCode status) {
+    this(null, order, status);
   }
   
   /**
@@ -105,12 +105,26 @@ public class Shipment {
     return true;
   }
   
+  public Customer getCustomer() {
+    return customer;
+  }
+  
   /**
    * @effects 
    * 
    */
   public boolean isCompleted() {
     return status.equals(StatusCode.Done);
+  }
+  
+  @DOpt(type = DOpt.Type.AutoAttributeValueSynchroniser)
+  public static void synchWithSource(DAttr attrib, Tuple derivingValue, Object minVal, Object maxVal) throws ConstraintViolationException {
+      String attribName = attrib.name();
+      if (attribName.equals("id")) {
+          int maxIdVal = (Integer) maxVal;
+          if (maxIdVal > idCounter)
+              idCounter = maxIdVal;
+      }
   }
   
   /**

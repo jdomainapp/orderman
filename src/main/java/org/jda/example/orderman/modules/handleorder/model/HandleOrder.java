@@ -8,11 +8,12 @@ import static jda.modules.mbsl.model.graph.NodeType.Merge;
 import static jda.mosa.controller.assets.util.AppState.Created;
 import static jda.mosa.controller.assets.util.AppState.NewObject;
 import static jda.mosa.controller.assets.util.AppState.Updated;
-import static jda.mosa.controller.assets.util.MethodName.activateView;
 import static jda.mosa.controller.assets.util.MethodName.createObject;
+import static jda.mosa.controller.assets.util.MethodName.filterInput;
 import static jda.mosa.controller.assets.util.MethodName.newObject;
 import static jda.mosa.controller.assets.util.MethodName.setDataFieldValues;
 import static jda.mosa.controller.assets.util.MethodName.showObject;
+import static jda.mosa.controller.assets.util.MethodName.updateObject;
 
 import java.util.Collection;
 
@@ -23,6 +24,7 @@ import org.jda.example.orderman.modules.handleorder.control.model.AcceptOrNot;
 import org.jda.example.orderman.modules.handleorder.control.model.CompleteOrder;
 import org.jda.example.orderman.modules.handleorder.control.model.EndOrder;
 import org.jda.example.orderman.modules.invoice.model.Invoice;
+import org.jda.example.orderman.modules.order.filter.FilterCustOrderFromPayment;
 import org.jda.example.orderman.modules.order.model.CustOrder;
 import org.jda.example.orderman.modules.payment.model.AcceptPayment;
 import org.jda.example.orderman.modules.payment.model.Payment;
@@ -70,7 +72,8 @@ import jda.mosa.controller.ControllerBasic.DataController;
     nodeType=Coordinator,
     actSeq = {
       @MAct(actName=newObject, endStates={NewObject}),
-      @MAct(actName=setDataFieldValues, attribNames={"receivedOrder"}, endStates = {Created}),
+      @MAct(actName=setDataFieldValues, attribNames={"receivedOrder"}),
+      @MAct(actName=createObject, endStates={Created})
     }),
 /* 4 */    
 @ANode(label="4:EndOrder", refCls=EndOrder.class, 
@@ -90,9 +93,10 @@ import jda.mosa.controller.ControllerBasic.DataController;
 }
     ),
 /* 7 */    
-@ANode(label="7:CustOrder",zone="4:EndOrder", refCls=CustOrder.class, serviceCls=DataController.class, 
+@ANode(label="7:CustOrder",zone="6:Delivery", refCls=CustOrder.class, serviceCls=DataController.class, 
       actSeq={
-        @MAct(actName=activateView, endStates={Updated})
+        @MAct(actName=showObject),
+        @MAct(actName=updateObject, endStates = {Updated})
         }),
 /* 8 */    
 @ANode(label="8:CollectPayment", zone="6:Delivery",refCls=CollectPayment.class, 
@@ -101,7 +105,8 @@ import jda.mosa.controller.ControllerBasic.DataController;
       outNodes= {"10:Invoice"},
       actSeq={
         @MAct(actName=newObject, endStates={NewObject}),
-//        @MAct(actName=setDataFieldValues, attribNames = {"order"}, endStates={Created})
+        @MAct(actName=setDataFieldValues, attribNames = {"receivedOrder"}),
+        @MAct(actName=createObject, endStates={Created})
         }),
 /* 9 */    
 @ANode(label="9:ShipOrder", zone="6:Delivery",refCls=ShipOrder.class, serviceCls=DataController.class,
@@ -109,7 +114,7 @@ import jda.mosa.controller.ControllerBasic.DataController;
       outNodes= {"13:Shipment"},
       actSeq={
         @MAct(actName=newObject, endStates={NewObject}),
-//        @MAct(actName=setDataFieldValues, attribNames = {"order"}, endStates={Created})
+        @MAct(actName=setDataFieldValues, attribNames = {"receivedOrder"}, endStates={Created})
         }),
 /* 10 */    
 @ANode(label="10:Invoice", zone="8:CollectPayment",refCls=Invoice.class, serviceCls=DataController.class, 
@@ -131,7 +136,8 @@ import jda.mosa.controller.ControllerBasic.DataController;
       nodeType=Coordinator,      
       actSeq={
         @MAct(actName=newObject, endStates={NewObject}),
-        @MAct(actName=setDataFieldValues, attribNames = {"invoice"}, endStates={Created})
+        @MAct(actName=setDataFieldValues, attribNames = {"invoice"}),
+        @MAct(actName=createObject, endStates={Created})
         }),
 /* 13 */    
 @ANode(label="13:Shipment", zone="9:ShipOrder",refCls=Shipment.class, serviceCls=DataController.class,
@@ -149,13 +155,13 @@ import jda.mosa.controller.ControllerBasic.DataController;
        outNodes= { "16:CustOrder" },
 actSeq={
   @MAct(actName=newObject, endStates = {NewObject}),
-  @MAct(actName=setDataFieldValues, attribNames = {"acceptPayment"}, endStates = {Created}),
+  @MAct(actName=setDataFieldValues, attribNames = {"invoice"}, endStates = {Created}),
 }),/* 16 */    
 @ANode(label="16:CustOrder", zone="12:AcceptPayment",refCls=CustOrder.class,serviceCls=DataController.class,
 outNodes= { "14:CompleteOrder" },
 actSeq={
-  @MAct(actName=newObject, endStates = {NewObject}),
-  @MAct(actName=setDataFieldValues, attribNames = {"payment"}, endStates = {Created}),
+  @MAct(actName=filterInput, filterType=FilterCustOrderFromPayment.class),
+  @MAct(actName=showObject, endStates = {Updated}),
   }),
 })
 /**END: activity graph configuration */
@@ -185,16 +191,6 @@ public class HandleOrder {
         updateLink=false
     ))
   private Collection<FillOrder> fillOrders;
-  
-  // end order
-//  @DAttr(name="fillOrder", type=Type.Collection,filter=@Select(clazz=EndOrder.class),serialisable=false)
-//  @DAssoc(ascName="fill-order",role="mgmt",
-//    ascType=AssocType.One2Many,endType=AssocEndType.One,
-//    associate=@Associate(
-//        type=EndOrder.class,cardMin=0,cardMax=DCSLConstants.CARD_MORE,
-//        updateLink=false
-//    ))
-//  private Collection<EndOrder> endOrders;
   
   // not used at the moment
   public HandleOrder(Integer id) {

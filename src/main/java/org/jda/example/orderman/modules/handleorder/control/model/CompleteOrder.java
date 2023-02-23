@@ -49,7 +49,7 @@ public class CompleteOrder implements Join {
       // should not happen
       throw new NotPossibleException(DomainMessage.ERR_FAIL_TO_FILTER_JOIN_INPUT, new Object[] {joinNode, Arrays.toString(args)});
     } else {      
-      approved = order.getPayment().isCompleted() && shipment.isCompleted();
+      approved = order.isPaid() && shipment.isCompleted();
       return new Object[] {order, shipment, approved};
     }
   }

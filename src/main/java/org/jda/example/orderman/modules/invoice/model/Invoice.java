@@ -7,8 +7,11 @@ import org.jda.example.orderman.modules.delivery.model.CollectPayment;
 import org.jda.example.orderman.modules.order.model.CustOrder;
 import org.jda.example.orderman.util.model.StatusCode;
 
+import jda.modules.common.exceptions.ConstraintViolationException;
+import jda.modules.common.types.Tuple;
 import jda.modules.dcsl.syntax.DAttr;
 import jda.modules.dcsl.syntax.DAttr.Type;
+import jda.modules.dcsl.syntax.DOpt;
 
 /**
  * @overview 
@@ -21,7 +24,7 @@ public class Invoice {
   @DAttr(name="id",type=Type.Integer,id=true,auto=true,mutable=false,optional=false,min=1)
   private int id;
   
-  private static int idCounter;
+  private static int idCounter = 0;
   
   @DAttr(name="order", type=Type.Domain, mutable=false)
   private CustOrder order;
@@ -71,7 +74,7 @@ public class Invoice {
     this.status = status;
     
     // update order as well
-    order.wasInvoiced();
+    order.invoiced();
     
     return true;
   }
@@ -122,6 +125,16 @@ public class Invoice {
     return customer;
   }
 
+  @DOpt(type = DOpt.Type.AutoAttributeValueSynchroniser)
+  public static void synchWithSource(DAttr attrib, Tuple derivingValue, Object minVal, Object maxVal) throws ConstraintViolationException {
+      String attribName = attrib.name();
+      if (attribName.equals("id")) {
+          int maxIdVal = (Integer) maxVal;
+          if (maxIdVal > idCounter)
+              idCounter = maxIdVal;
+      }
+  }
+  
   /**
    * @effects 
    * 

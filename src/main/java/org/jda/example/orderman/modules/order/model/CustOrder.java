@@ -6,6 +6,7 @@ import java.util.List;
 
 import org.jda.example.orderman.modules.customer.model.Customer;
 import org.jda.example.orderman.modules.delivery.model.CollectPayment;
+import org.jda.example.orderman.modules.delivery.model.Delivery;
 import org.jda.example.orderman.modules.fillorder.model.FillOrder;
 import org.jda.example.orderman.modules.handleorder.model.HandleOrder;
 import org.jda.example.orderman.modules.payment.model.AcceptPayment;
@@ -88,6 +89,10 @@ public class CustOrder {
   // virtual link to FillOrder
   @DAttr(name="fillOrder",type=Type.Domain,serialisable=false,virtual=true)
   private FillOrder fillOrder;
+  
+  //  virtual link
+  @DAttr(name="delivery",type=Type.Domain,serialisable=false,virtual=true)
+  private Delivery delivery;
   
   //  virtual link
   @DAttr(name="collectPayment",type=Type.Domain,serialisable=false,virtual=true)
@@ -341,7 +346,7 @@ public class CustOrder {
     this.payment = payment;
     
     // update this status
-    return wasPaid();
+    return paid();
   }
 
   @Override
@@ -418,11 +423,19 @@ public class CustOrder {
   }
 
   /**
+   * @effects 
+   * 
+   */
+  public boolean isPaid() {
+    return this.status == OrderStatus.PAID;
+  }
+  
+  /**
    * @effects  
    *  update this.status to INVOICED
    * 
    */
-  public boolean wasInvoiced() {
+  public boolean invoiced() {
     this.status = OrderStatus.INVO;
     
     return true;
@@ -430,14 +443,28 @@ public class CustOrder {
   
   /**
    * @effects 
-   * 
-   * @version 
-   * 
+   *  set this.status to PAID 
    */
-  public boolean wasPaid() {
+  public boolean paid() {
     this.status = OrderStatus.PAID;
     
     return true;
   }
-  
+
+  /**
+   * @effects 
+   *  set this.status to REJECTED 
+   */
+  public void rejected() {
+    this.status = OrderStatus.REJE;
+  }
+
+  /**
+   * @effects 
+   *  set this.status to COMPLETED 
+   */
+  public void completed() {
+    this.status = OrderStatus.CLOS;
+  }
+
 }

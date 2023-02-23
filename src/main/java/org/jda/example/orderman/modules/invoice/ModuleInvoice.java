@@ -5,6 +5,7 @@ import org.jda.example.orderman.modules.invoice.model.Invoice;
 import org.jda.example.orderman.modules.order.model.CustOrder;
 import org.jda.example.orderman.util.model.StatusCode;
 
+import jda.modules.mccl.conceptmodel.view.RegionName;
 import jda.modules.mccl.conceptmodel.view.RegionType;
 import jda.modules.mccl.syntax.MCCLConstants;
 import jda.modules.mccl.syntax.ModuleDescriptor;
@@ -31,7 +32,10 @@ import jda.mosa.view.assets.datafields.list.JComboField;
       formTitle="Invoice",
       imageIcon="invoice.gif",
       viewType=RegionType.Data,
-      view=View.class
+      view=View.class,
+      parent=RegionName.Tools,
+      topX=0.5,topY=0.0,widthRatio=0.5f,heightRatio=0.6f
+      
   ),
   isPrimary=true
 )

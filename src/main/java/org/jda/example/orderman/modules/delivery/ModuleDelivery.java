@@ -62,6 +62,7 @@ public class ModuleDelivery {
       )
   private CustOrder receivedOrder;
 
+  // collect payments
   @AttributeDesc(label="Collect payment"
     ,type=DefaultPanel.class
 //    ,layoutBuilderType=TwoColumnLayoutBuilder.class
@@ -69,12 +70,21 @@ public class ModuleDelivery {
           openPolicy=OpenPolicy.I))
   private Collection<CollectPayment> collectPayments;
   
-  // fill order
+  // ship order
   @AttributeDesc(label="Ship order"
       ,type=DefaultPanel.class
 //      ,layoutBuilderType=TwoColumnLayoutBuilder.class
         ,controllerDesc=@ControllerDesc(
             openPolicy=OpenPolicy.I))
   private Collection<ShipOrder> shipOrders;
+  
+  // close order
+  @AttributeDesc(label="Close Order"
+      ,type=DefaultPanel.class
+//      ,styleLabel=StyleName.Heading4DarkYellow
+//      ,styleField=StyleName.DefaultOnLightYellow
+      ,controllerDesc=@ControllerDesc(
+          openPolicy=OpenPolicy.I))
+  private Collection<CustOrder> closeOrders;
   
 }

@@ -7,12 +7,12 @@ import org.jda.example.orderman.modules.customer.model.Customer;
 import org.jda.example.orderman.modules.order.model.CustOrder;
 import org.jda.example.orderman.modules.order.model.OrderLine;
 import org.jda.example.orderman.modules.order.model.OrderStatus;
+import org.jda.example.orderman.modules.payment.model.Payment;
 
-import jda.modules.mccl.conceptmodel.module.ModuleType;
 import jda.modules.mccl.conceptmodel.view.RegionName;
 import jda.modules.mccl.conceptmodel.view.RegionType;
-import jda.modules.mccl.syntax.ModuleDescriptor;
 import jda.modules.mccl.syntax.MCCLConstants.AlignmentX;
+import jda.modules.mccl.syntax.ModuleDescriptor;
 import jda.modules.mccl.syntax.controller.ControllerDesc;
 import jda.modules.mccl.syntax.controller.ControllerDesc.OpenPolicy;
 import jda.modules.mccl.syntax.model.ModelDesc;
@@ -59,6 +59,9 @@ public class ModuleCustOrder {
   @AttributeDesc(label="Customer")
   private Customer customer;
 
+  @AttributeDesc(label="Payment", isVisible = false)
+  private Payment payment;
+  
   @AttributeDesc(label="Order lines",type=JObjectTable.class,
       controllerDesc=@ControllerDesc(openPolicy=OpenPolicy.O)  // v2.6.4b
   )

@@ -10,9 +10,11 @@ import jda.modules.mccl.conceptmodel.view.RegionType;
 import jda.modules.mccl.conceptmodel.view.StyleName;
 import jda.modules.mccl.syntax.MCCLConstants;
 import jda.modules.mccl.syntax.ModuleDescriptor;
+import jda.modules.mccl.syntax.controller.ControllerDesc;
 import jda.modules.mccl.syntax.model.ModelDesc;
 import jda.modules.mccl.syntax.view.AttributeDesc;
 import jda.modules.mccl.syntax.view.ViewDesc;
+import jda.mosa.controller.Controller;
 import jda.mosa.view.View;
 import jda.mosa.view.assets.datafields.JTextField;
 import jda.mosa.view.assets.datafields.list.JComboField;
@@ -38,7 +40,11 @@ import jda.mosa.view.assets.layout.SequentialLayoutBuilder;
       parent=RegionName.Tools,
       topX=0.5,topY=0.0,widthRatio=0.5f,heightRatio=0.7f
   ),
-  isPrimary=true
+  isPrimary=true,
+  controllerDesc=@ControllerDesc(
+      controller=Controller.class,
+      isDataFieldStateListener=true
+  )
 )
 public class ModuleShipment {
   @AttributeDesc(label="Shipment")
@@ -57,6 +63,9 @@ public class ModuleShipment {
       type=JTextField.class, editable=false)
   private CustOrder order;
   
-  @AttributeDesc(label="Status", type=JComboField.class)
+  @AttributeDesc(label="Status"
+      , type=JComboField.class
+      ,isStateEventSource=true
+      )
   private StatusCode status;  
 }

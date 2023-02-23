@@ -54,6 +54,16 @@ public class Delivery {
      ))
   private Collection<ShipOrder> shipOrders;
 
+  // end order
+  @DAttr(name="closeOrders", type=Type.Collection,filter=@Select(clazz=CustOrder.class),serialisable=false)
+  @DAssoc(ascName="end-order",role="mgmt",
+    ascType=AssocType.One2Many,endType=AssocEndType.One,
+    associate=@Associate(
+        type=CustOrder.class,cardMin=0,cardMax=DCSLConstants.CARD_MORE,
+        updateLink=false
+    ))
+  private Collection<CustOrder> closeOrders;
+  
   // virtual link to FillOrder
   @DAttr(name="fillOrder",type=Type.Domain,serialisable=false,virtual=true)
   private FillOrder fillOrder;

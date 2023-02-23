@@ -53,7 +53,8 @@ public class ModuleAcceptPayment {
   
   @AttributeDesc(label="Invoice",
       width = 20, height=MCCLConstants.STANDARD_FIELD_HEIGHT,
-      type=JTextField.class, editable=false)
+      type=JTextField.class, editable=false, 
+      isVisible=false)
   private Invoice invoice;
 
   // payment

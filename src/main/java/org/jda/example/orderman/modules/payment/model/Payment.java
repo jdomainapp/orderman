@@ -40,8 +40,8 @@ public class Payment {
     private int id;
     private static int idCounter;
 
-    @DAttr(name="acceptPayment", type=Type.Domain, mutable=false, auto=true, serialisable=false)
-    private AcceptPayment acceptPayment;
+//    @DAttr(name="acceptPayment", type=Type.Domain, mutable=false, auto=true, serialisable=false)
+//    private AcceptPayment acceptPayment;
 
     @DAttr(name = A_payDetails, type = Type.String, length = 255, auto=true, mutable=false)
     private String payDetails;
@@ -49,6 +49,13 @@ public class Payment {
     @DAttr(name = A_description, type = Type.String, length = 255, auto=true, mutable=false)
     private String description;
 
+    @DAttr(name="invoice", type=Type.Domain, mutable=false)
+    private Invoice invoice;
+
+    // derived from invoice
+    @DAttr(name="customer", type=Type.Domain, mutable=false, auto=true, serialisable=false)
+    private Customer customer;
+    
     @DAttr(name = "amount", type = Type.Double)
     private double amount;
     
@@ -58,15 +65,6 @@ public class Payment {
         )
     private PaymentStatus status;
 
-    
-    // derived from acceptPayment
-    @DAttr(name="invoice", type=Type.Domain, mutable=false, auto=true)
-    private Invoice invoice;
-
-    // derived from invoice
-    @DAttr(name="customer", type=Type.Domain, mutable=false, auto=true, serialisable=false)
-    private Customer customer;
-    
     /***
      * derived from {@link #status}
      */
@@ -74,8 +72,8 @@ public class Payment {
     private String statusStr;
 
     //  virtual link
-//    @DAttr(name="acceptPayment",type=Type.Domain,serialisable=false,virtual=true)
-//    private AcceptPayment acceptPayment;
+    @DAttr(name="acceptPayment",type=Type.Domain,serialisable=false,virtual=true)
+    private AcceptPayment acceptPayment;
     
     /*** END: state space**/
     
@@ -120,33 +118,40 @@ public class Payment {
      *  obtain the result and initialise {@link #payDetails}, {@link #description}, {@link #status}.
      */
     @DOpt(type = DOpt.Type.DataSourceConstructor)
-    @DOpt(type = DOpt.Type.ObjectFormConstructor)
-    public Payment(Integer id, String paymentDetails, String description, Double amount, PaymentStatus status) throws ConstraintViolationException {
-        if (id == null) {
-          // object from
-          this.id = genId(null);
-          
-          // executes the payment process
-          Map<String, Object> result = executePayment();
-          
-          // initialise rest of the attributes according to the result obtained
-          if (result != null) {
-            this.payDetails = (String) result.get(A_payDetails);
-            this.description = (String) result.get(A_description);
-            this.status = (PaymentStatus) result.get(A_status);
-            
-            this.statusStr = status.name();
-          }
-        } else {
-          // data source
-          this.id = genId(id);
-          this.payDetails = paymentDetails;
-          this.description = description;
-          this.status = status;
-          this.amount = amount;
-          this.statusStr = status.name();
+    public Payment(Integer id, Invoice invoice, String paymentDetails, String description, Double amount, PaymentStatus status) throws ConstraintViolationException {
+      if (id == null) {
+        // object from
+        this.id = genId(null);
+        
+        this.invoice = invoice;
+        this.customer = invoice.getCustomer();
+        
+        // executes the payment process
+        Map<String, Object> result = executePayment();
+        
+        // initialise rest of the attributes according to the result obtained
+        if (result != null) {
+          this.payDetails = (String) result.get(A_payDetails);
+          this.description = (String) result.get(A_description);
+          this.status = (PaymentStatus) result.get(A_status);
+          this.statusStr = this.status.name();
         }
         
+        this.amount = (amount != null) ? amount : 0;
+      } else {
+        // data source
+        this.id = genId(id);
+        this.invoice = invoice;
+        this.payDetails = paymentDetails;
+        this.description = description;
+        this.status = status;
+        this.amount = (amount != null) ? amount : 0;
+        this.statusStr = status.name();
+      }
+    }
+    
+    public Payment(Invoice invoice, Double amount) {
+      this(null, invoice, null, null, amount, null);
     }
     
     @DOpt(type = DOpt.Type.Getter)
@@ -216,25 +221,7 @@ public class Payment {
 //    public void setEnrolmentProc(EnrolmentProcessing enrolmentProc) {
 //      this.enrolmentProc = enrolmentProc;
 //    }
-    
-    /**
-     * @effects return acceptPayment
-     */
-    public AcceptPayment getAcceptPayment() {
-      return acceptPayment;
-    }
-
-    /**
-     * @effects set acceptPayment = acceptPayment
-     */
-    public boolean setAcceptPayment(AcceptPayment acceptPayment) {
-      this.acceptPayment = acceptPayment;
-      
-      this.invoice = acceptPayment.getInvoice();
-      this.customer = invoice.getCustomer();
-      
-      return true;
-    }
+   
 
     /**
      * @effects return invoice

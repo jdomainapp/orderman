@@ -11,11 +11,18 @@ import jda.modules.dcsl.syntax.DAttr.Type;
  * @version 
  */
 public enum OrderStatus {
+  /**received*/
   RECV("Received"),
+  /**filled (but not paid)*/
   FILL("Filled"),
+  /**invoiced*/
   INVO("Invoiced"),
+  /**paid*/
+  PAID("Paid"),
+  /**successfully completed and closed*/
   CLOS("Closed"),
-  REJE("Rejected"), PAID("Paid"),
+  /**rejected*/
+  REJE("Rejected"), 
   ;
   
   private String name;

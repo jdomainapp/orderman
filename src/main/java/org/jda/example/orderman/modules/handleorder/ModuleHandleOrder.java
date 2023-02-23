@@ -15,6 +15,7 @@ import static jda.modules.mccl.conceptmodel.view.RegionName.Update;
 import java.util.Collection;
 
 import org.jda.example.orderman.modules.delivery.model.CollectPayment;
+import org.jda.example.orderman.modules.delivery.model.Delivery;
 import org.jda.example.orderman.modules.fillorder.ModuleFillOrder;
 import org.jda.example.orderman.modules.fillorder.model.FillOrder;
 import org.jda.example.orderman.modules.handleorder.model.HandleOrder;
@@ -59,7 +60,7 @@ import jda.mosa.view.assets.panels.DefaultPanel;
         view=View.class,
         viewType=RegionType.Data,
         layoutBuilderType=DecisionalLayoutBuilder.class, //TabLayoutBuilder.class,
-        topX=0.5,topY=0.0,widthRatio = 0.5f, heightRatio = -1f,
+        topX=0.5,topY=0.0,widthRatio = 0.5f, heightRatio = 0.5f,
         parent=RegionName.Tools,
         excludeComponents={
           // general actions
@@ -94,6 +95,13 @@ import jda.mosa.view.assets.panels.DefaultPanel;
                     }
                 ))
             ,@CEdge(parent=AcceptPayment.class, child=CustOrder.class, 
+            scopeDesc = @ScopeDesc(
+                stateScope = {"orderID", "orderDate", "status"}
+                ,attribDescs = {                        @AttributeDesc(id="orderDate",editable=false,type=JSimpleFormattedField.class),
+                    @AttributeDesc(id="orderID",editable = false)
+                }
+            ))
+            ,@CEdge(parent=Delivery.class, child=CustOrder.class, 
             scopeDesc = @ScopeDesc(
                 stateScope = {"orderID", "orderDate", "status"}
                 ,attribDescs = {                        @AttributeDesc(id="orderDate",editable=false,type=JSimpleFormattedField.class),
