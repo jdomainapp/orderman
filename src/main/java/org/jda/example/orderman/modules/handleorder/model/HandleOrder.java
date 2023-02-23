@@ -111,54 +111,49 @@ import jda.mosa.controller.ControllerBasic.DataController;
 /* 9 */    
 @ANode(label="9:ShipOrder", zone="6:Delivery",refCls=ShipOrder.class, serviceCls=DataController.class,
       nodeType=Coordinator,
-      outNodes= {"13:Shipment"},
+      outNodes= {"12:Shipment"},
       actSeq={
         @MAct(actName=newObject, endStates={NewObject}),
         @MAct(actName=setDataFieldValues, attribNames = {"receivedOrder"}, endStates={Created})
         }),
 /* 10 */    
 @ANode(label="10:Invoice", zone="8:CollectPayment",refCls=Invoice.class, serviceCls=DataController.class, 
-      outNodes = {"12:AcceptPayment"},
+      outNodes = {"11:AcceptPayment"},
       actSeq={
         // create new and wait until a new object is created
         @MAct(actName=newObject, endStates={NewObject}),
         @MAct(actName=setDataFieldValues, attribNames = {"order"}, endStates={Created})
         }),
 /* 11 */    
-//@ANode(label="11:CustOrder", zone="8:CollectPayment",refCls=CustOrder.class, serviceCls=DataController.class,
-//      outNodes = {"12:AcceptPayment"},
-//      actSeq={
-//        @MAct(actName=activateView, endStates={Updated})
-//        }),
-/* 12 */    
-@ANode(label="12:AcceptPayment", zone="8:CollectPayment",refCls=AcceptPayment.class, serviceCls=DataController.class,
-      outNodes= {"15:Payment"},
+@ANode(label="11:AcceptPayment", zone="8:CollectPayment",refCls=AcceptPayment.class, serviceCls=DataController.class,
+      outNodes= {"14:Payment"},
       nodeType=Coordinator,      
       actSeq={
         @MAct(actName=newObject, endStates={NewObject}),
         @MAct(actName=setDataFieldValues, attribNames = {"invoice"}),
         @MAct(actName=createObject, endStates={Created})
         }),
-/* 13 */    
-@ANode(label="13:Shipment", zone="9:ShipOrder",refCls=Shipment.class, serviceCls=DataController.class,
-      outNodes = { "14:CompleteOrder" },
+/* 12 */    
+@ANode(label="12:Shipment", zone="9:ShipOrder",refCls=Shipment.class, serviceCls=DataController.class,
+      outNodes = { "13:CompleteOrder" },
       actSeq={
         // create new and wait until a new object is created
         @MAct(actName=newObject, endStates={NewObject}),
         @MAct(actName=setDataFieldValues, attribNames = {"order"}, endStates={Created})
         }),
-/* 14 */    
-@ANode(label="14:CompleteOrder",refCls=CompleteOrder.class, nodeType=Join, 
+/* 13 */    
+@ANode(label="13:CompleteOrder",refCls=CompleteOrder.class, nodeType=Join, 
       outNodes= {"4:EndOrder"}),
-/* 15 */    
-@ANode(label="15:Payment", zone="12:AcceptPayment",refCls=Payment.class, serviceCls=DataController.class, 
-       outNodes= { "16:CustOrder" },
+/* 14 */    
+@ANode(label="14:Payment", zone="11:AcceptPayment",refCls=Payment.class, serviceCls=DataController.class, 
+       outNodes= { "15:CustOrder" },
 actSeq={
   @MAct(actName=newObject, endStates = {NewObject}),
   @MAct(actName=setDataFieldValues, attribNames = {"invoice"}, endStates = {Created}),
-}),/* 16 */    
-@ANode(label="16:CustOrder", zone="12:AcceptPayment",refCls=CustOrder.class,serviceCls=DataController.class,
-outNodes= { "14:CompleteOrder" },
+}),
+/* 15 */    
+@ANode(label="15:CustOrder", zone="11:AcceptPayment",refCls=CustOrder.class,serviceCls=DataController.class,
+outNodes= { "13:CompleteOrder" },
 actSeq={
   @MAct(actName=filterInput, filterType=FilterCustOrderFromPayment.class),
   @MAct(actName=showObject, endStates = {Updated}),
